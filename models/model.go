@@ -38,3 +38,7 @@ type Dates struct{
 	Index []DateItem	`json:"index"`
 }
 
+type FullArtist struct{
+	Artist
+	DatesLocations map[string][]string
+}

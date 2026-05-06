@@ -1,12 +1,41 @@
 package api
 
-import(
-	"net/http"
+import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"net/http"
 	"stage/models"
-	"encoding/json"
 )
+
+func GetFullArtist()([]models.FullArtist, error){
+	artists, err := GetArtists()
+	if err != nil{
+		return nil, err
+	}
+	relation, err := GetRelations()
+	if err != nil{
+		return nil, err
+	}
+
+
+    var ArrayFullArtist []models.FullArtist
+
+	for _, artist := range artists{
+
+		info := models.FullArtist{
+			 Artist:artist,
+             DatesLocations:relation[artist.Id],
+		}
+
+		ArrayFullArtist = append(ArrayFullArtist, info)
+	}
+
+
+    return ArrayFullArtist, nil
+
+
+}
 
 func GetArtists()([]models.Artist, error){
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/artists")
@@ -35,3 +64,35 @@ func GetArtists()([]models.Artist, error){
 	}
 	return artists, nil
 }
+
+func GetRelations()(map[int]map[string][]string, error){
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/relation")
+	if err != nil{
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK{
+		return nil, fmt.Errorf("Bad Status %s", resp.Status)
+	}
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil{
+		return nil, err
+	}
+
+	var relations models.Relations
+
+	err = json.Unmarshal(data, &relations)
+	if err != nil{
+		return nil, err
+	}
+
+	relationMap := make(map[int]map[string][]string)
+
+	for _, item := range relations.Index{
+		relationMap[item.Id] = item.DatesLocations
+	}
+	return relationMap, nil
+}
+

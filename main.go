@@ -13,7 +13,7 @@ import (
 
 var tmpl = template.Must(template.ParseFiles("templates/index.html", "templates/artist.html"))
 
-var artistsCache []models.Artist
+var artistsCache []models.FullArtist
 
 func ArtistsHandler(w http.ResponseWriter, r *http.Request){
 
@@ -46,7 +46,7 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request){
 
 func main(){
 	var err error
-	artistsCache, err = api.GetArtists()
+	artistsCache, err = api.GetFullArtist()
 	if err != nil{
 		fmt.Println("Error fetching artists", err)
 		return
