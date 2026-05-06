@@ -17,7 +17,10 @@ var artistsCache []models.FullArtist
 
 func ArtistsHandler(w http.ResponseWriter, r *http.Request){
 
-	tmpl.ExecuteTemplate(w, "index.html", artistsCache)
+	err := tmpl.ExecuteTemplate(w, "index.html", artistsCache)
+	if err != nil{
+		http.Error(w, "template error", http.StatusInternalServerError)
+	}
 }
 
 func SingleArtistHandler(w http.ResponseWriter, r *http.Request){
