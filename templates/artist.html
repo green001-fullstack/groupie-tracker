@@ -21,9 +21,18 @@
             {{end}}
         </ul>
         <div class="date-locations">
-            <h3>Dates and Location</h3>
+            <h3>Concert Dates</h3>
             <ul>
-                
+                {{range $key, $value := .DatesLocations}}
+                <li>
+                    <strong>{{$key | formatLocation}}</strong>
+                    <ul>
+                        {{range $value}}
+                        <li>{{.}}</li>
+                        {{end}}
+                    </ul>
+                </li>
+                {{end}}
             </ul>
         </div>
     </div>
