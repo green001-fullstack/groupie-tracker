@@ -18,7 +18,6 @@ func GetFullArtist()([]models.FullArtist, error){
 		return nil, err
 	}
 
-
     var ArrayFullArtist []models.FullArtist
 
 	for _, artist := range artists{
@@ -30,7 +29,6 @@ func GetFullArtist()([]models.FullArtist, error){
 
 		ArrayFullArtist = append(ArrayFullArtist, info)
 	}
-
 
     return ArrayFullArtist, nil
 
