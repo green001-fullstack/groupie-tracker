@@ -5,22 +5,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/index.css">
 </head>
 
 <body>
-    <h1>The Groupie Tracker</h1>
-    <div class="Artists-collection">
-        <h2>Artists</h2>
-        <ul>
+    <h1>Let's Get The Tracking Started</h1>
+    <div class="artists-collection">
+        <h2>List of Artists</h2>
+        <div class="artist-grid">
             {{range .}}
-            <li>
-                <a href="/artists/{{.Id}}">{{.Name}}</a>
+            <div class="artist-card">
                 <img src="{{.Image}}" alt="{{.Name}}">
+                <h3>{{.Name}}</h3>
                 <p><strong>FirstAlbum:</strong>{{.FirstAlbum}}</p>
-            </li>
+                <a href="/artists/{{.Id}}">Personal Details</a>
+            </div>
             {{end}}
-        </ul>
+        </div>
     </div>
 </body>
+
 </html>
