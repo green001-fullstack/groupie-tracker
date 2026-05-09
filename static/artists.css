@@ -1,0 +1,48 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #111;
+    color: white;
+}
+
+h1{
+    text-align: center;
+    margin-top: 2rem;
+}
+
+h3{
+    text-align: center;
+    padding-top: 2rem;
+}
+
+.top-details{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    gap: 1rem;
+}
+
+.members{
+    text-align: center;
+    margin-top: 2rem;
+}
+
+.member-list{
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.member-list li{
+    background: #d22a2a;
+    margin: 5px auto;
+    padding: 8px;
+    width: 200px;
+    border-radius: 8px;
+}

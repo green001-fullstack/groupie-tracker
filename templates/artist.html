@@ -5,24 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="artists.css">
+    <link rel="stylesheet" href="/static/artists.css">
 </head>
 
 <body>
     <h1>Personal Details</h1>
     <div class="Artist-container">
-        <h2>{{.Name}}</h2>
-        <img src="{{.Image}}" alt="{{.Name}}">
-        <p><strong>First Album:</strong> {{.FirstAlbum}}</p>
-        <p><strong>Members:</strong></p>
-        <ul>
-            {{range .Members}}
-            <li>{{.}}</li>
-            {{end}}
-        </ul>
+        <div class="top-details">
+            <img src="{{.Image}}" alt="{{.Name}}">
+            <h2>{{.Name}}</h2>
+            <p><strong>First Album:</strong> {{.FirstAlbum}}</p>
+        </div>
+        <div class="members">
+            <h2>Members</h2>
+            
+            <ul class="member-list">
+                {{range .Members}}
+                <l>{{.}}</l>
+                {{end}}
+            </ul>
+        </div>
         <div class="date-locations">
             <h3>Concert Dates</h3>
-            <ul>
+            <ul class="dates-locations">
                 {{range $key, $value := .DatesLocations}}
                 <li>
                     <strong>{{$key | formatLocation}}</strong>
