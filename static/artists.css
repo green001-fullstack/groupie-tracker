@@ -40,9 +40,49 @@ h3{
 }
 
 .member-list li{
-    background: #d22a2a;
+    background-color: #222;
     margin: 5px auto;
     padding: 8px;
     width: 200px;
     border-radius: 8px;
+}
+
+.date-locations{
+    padding: 20px;
+}
+
+.locations-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.location-card{
+    background-color: #222;
+    padding: 1rem;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+
+}
+
+.location-card h4{
+    margin-bottom: 1rem;
+    color: #ffcc70;
+}
+
+.date-list{
+    list-style: none;
+    padding: 0;
+}
+
+.date-list li{
+    background-color: #333;
+
+    margin-top: 0.5rem;
+
+    padding: 0.5rem;
+
+    border-radius: 6px;
 }
