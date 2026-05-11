@@ -21,6 +21,7 @@ var tmpl = template.Must(
 		"templates/index.html",
 		"templates/artist.html",
 		"templates/home.html",
+		"templates/search.html",
 	),
 )
 
@@ -78,6 +79,46 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request){
 	http.NotFound(w, r)
 }
 
+func HandleSearch(w http.ResponseWriter, r *http.Request){
+	query := r.URL.Query().Get("query")
+	query = strings.TrimSpace(query)
+	if query == ""{
+		http.Redirect(w, r, "/artists", http.StatusSeeOther)
+		return
+	}
+	query = strings.ToLower(query)
+
+	var result []models.FullArtist
+	for _, artist := range artistsCache{
+		matched := false
+		if strings.Contains(strings.ToLower(artist.Name), query){
+			matched = true
+		}
+
+		if !matched {
+			for _, member := range artist.Members{
+				if strings.Contains(strings.ToLower(member), query){
+					matched = true
+					break
+				}
+			}
+		}
+		if matched {
+			result = append(result, artist)
+		}
+	}
+
+	searchResult := models.SearchResult{
+		Search: query,
+		Artists: result,
+	}
+
+	err := tmpl.ExecuteTemplate(w, "search.html", searchResult)
+	if err != nil{
+		http.Error(w, "Template Error", http.StatusInternalServerError)
+	}
+}
+
 func main(){
 	var err error
 	artistsCache, err = api.GetFullArtist()
@@ -89,6 +130,7 @@ func main(){
 	http.HandleFunc("/", HomeHandler)
 	http.HandleFunc("/artists", ArtistsHandler)
 	http.HandleFunc("/artists/", SingleArtistHandler)
+	http.HandleFunc("/search", HandleSearch)
 	log.Println("Server currently running on port:http://localhost:8000")
 	err = http.ListenAndServe(":8000", nil)
 	if err != nil {
