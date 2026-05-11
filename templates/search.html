@@ -11,10 +11,8 @@
 <body>
     <h1>Results for {{.Search}}</h1>
     <div class="navigation-artists">
-        <div class="navigation-center">
-            <p class="result-number">{{ len .Artists}} artists found</p>
-        </div>
-         <a class="artists-navigation" href="/artists">Back to Artists</a>
+        <p class="result-number">{{ len .Artists}} artists found</p>
+        <a class="artists-navigation" href="/artists">Back to Artists</a>
     </div>
 
     {{if .Artists}}
