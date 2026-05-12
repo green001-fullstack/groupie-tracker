@@ -24,8 +24,30 @@ h2{
     opacity: 0.8;
 }
 
+.form{
+    display: flex;
+    justify-content: center;
+    padding: 20px 0px;
+}
+
+.input, .button{
+    padding: 10px 15px;
+    border-radius: 20px;
+    text-align: center;
+}
+
+.input{
+    border: none;
+    width: 300px;
+}
+
+.button{
+  
+    border: none;
+}
+
 .artists-collection{
-  padding: 2rem;
+  padding: 0 2rem;
 }
 
 .artist-grid{

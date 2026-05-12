@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -22,6 +21,7 @@ var tmpl = template.Must(
 		"templates/artist.html",
 		"templates/home.html",
 		"templates/search.html",
+		"templates/error.html",
 	),
 )
 
@@ -29,14 +29,36 @@ var tmpl = template.Must(
 
 var artistsCache []models.FullArtist
 
+
+func RenderError(w http.ResponseWriter, code int, message string){
+	w.WriteHeader(code)
+
+	data := models.ErrorPage{
+		Code : code,
+		Message: message,
+	}
+	err := tmpl.ExecuteTemplate(w, "error.html", data)
+	if err != nil{
+		log.Println("template execution error:", err)
+		return
+	}
+}
+
 func HomeHandler(w http.ResponseWriter, r *http.Request){
+
+	 if r.Method != http.MethodGet {
+        RenderError(w, http.StatusMethodNotAllowed, "Method not allowed")
+        return
+    }
+
 	if r.URL.Path != "/"{
-		http.NotFound(w, r)
+		RenderError(w, http.StatusNotFound, "Page Not found")
 		return
 	}
 	err := tmpl.ExecuteTemplate(w, "home.html", nil)
 	if err != nil{
-		http.Error(w, "Template error", http.StatusInternalServerError)
+		RenderError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
 	}
 }
 
@@ -44,18 +66,20 @@ func ArtistsHandler(w http.ResponseWriter, r *http.Request){
 
 	err := tmpl.ExecuteTemplate(w, "index.html", artistsCache)
 	if err != nil{
-		http.Error(w, "template error", http.StatusInternalServerError)
+		RenderError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
 	}
 }
 
 func SingleArtistHandler(w http.ResponseWriter, r *http.Request){
+
 	path := r.URL.Path
 	// pathSlice := strings.Split(path, "/")
 	// val := pathSlice[len(pathSlice)-1]
 	newPath := strings.Trim(path, "/")
 	pathSlice := strings.Split(newPath, "/")
 	if len(pathSlice) != 2 {
-		http.NotFound(w, r)
+		RenderError(w, http.StatusBadRequest, "Invalid ID")
 		return
 	}
 	
@@ -63,7 +87,7 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request){
 
 	id, err := strconv.Atoi(val)
 	if err != nil {
-    	http.Error(w, "Invalid ID", http.StatusBadRequest)
+		RenderError(w, http.StatusBadRequest, "Invalid ID")
     	return
 	}
 
@@ -71,15 +95,21 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request){
 		if artist.Id == id{
 			err:= tmpl.ExecuteTemplate(w, "artist.html", artist)
 			if err != nil{
-				http.Error(w, "Template Error", http.StatusInternalServerError)
+				RenderError(w, http.StatusInternalServerError, "Template Error")
+				return
 			}
 			return
 		}
 	}
-	http.NotFound(w, r)
+	RenderError(w, http.StatusNotFound, "Artist not found")
 }
 
 func HandleSearch(w http.ResponseWriter, r *http.Request){
+	if r.Method != http.MethodGet {
+        RenderError(w, http.StatusMethodNotAllowed, "Method not allowed")
+        return
+    }
+
 	query := r.URL.Query().Get("query")
 	query = strings.TrimSpace(query)
 	if query == ""{
@@ -115,7 +145,8 @@ func HandleSearch(w http.ResponseWriter, r *http.Request){
 
 	err := tmpl.ExecuteTemplate(w, "search.html", searchResult)
 	if err != nil{
-		http.Error(w, "Template Error", http.StatusInternalServerError)
+		RenderError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
 	}
 }
 
@@ -123,8 +154,7 @@ func main(){
 	var err error
 	artistsCache, err = api.GetFullArtist()
 	if err != nil{
-		fmt.Println("Error fetching artists", err)
-		return
+		log.Fatal("Error fetching artists: ", err)
 	}
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", HomeHandler)

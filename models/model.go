@@ -47,3 +47,8 @@ type SearchResult struct{
 	Search string
 	Artists []FullArtist
 }
+
+type ErrorPage struct{
+	Code int
+	Message string
+}
