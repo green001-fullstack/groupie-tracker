@@ -9,6 +9,8 @@ import (
 	"stage/utils"
 	"strings"
 	"strconv"
+	"sort"
+	"slices"
 )
 
 var funcMap = template.FuncMap{
@@ -64,9 +66,41 @@ func HomeHandler(w http.ResponseWriter, r *http.Request){
 
 func ArtistsHandler(w http.ResponseWriter, r *http.Request){
 
-	err := tmpl.ExecuteTemplate(w, "index.html", artistsCache)
+	if r.Method != http.MethodGet {
+        RenderError(w, http.StatusMethodNotAllowed, "Method not allowed")
+        return
+    }
+
+	filter := r.URL.Query().Get("sort")
+	filter = strings.TrimSpace(filter)
+
+	filteredArtist := slices.Clone(artistsCache)
+
+	switch filter{
+	case "ascending":
+		sort.Slice(filteredArtist, func(i, j int)bool{
+		return filteredArtist[i].Name < filteredArtist[j].Name
+	})
+	case "descending":
+		sort.Slice(filteredArtist, func(i, j int)bool{
+		return filteredArtist[i].Name > filteredArtist[j].Name
+	})
+	case "oldest":
+		sort.Slice(filteredArtist,func(i, j int)bool{
+			return filteredArtist[i].CreationDate < filteredArtist[j].CreationDate
+		})
+	case "newest":
+		sort.Slice(filteredArtist, func(i, j int)bool{
+			return filteredArtist[i].CreationDate > filteredArtist[j].CreationDate
+		})
+	case "default":
+		// No sorting, keep the original order
+	 	filteredArtist = artistsCache
+	}
+
+	err := tmpl.ExecuteTemplate(w, "index.html", filteredArtist)
 	if err != nil{
-		RenderError(w, http.StatusInternalServerError, "Internal Server Error")
+		RenderError(w, http.StatusInternalServerError, "Template Error")
 		return
 	}
 }

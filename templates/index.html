@@ -15,6 +15,16 @@
             <input class="input" type="text" name="query" placeholder="search for an artist...">
             <button class="button" type="submit">Search</button>
         </form>
+        <form class="filter" action="/artists" method="GET">
+            <select class="select" name="sort" onchange="this.form.submit()">
+                <option value="">Filter artist by...</option>
+                <option value="default">default</option>
+                <option class="select-value" value="ascending">ascending</option>
+                <option value="descending">descending</option>
+                <option value="oldest">oldest</option>
+                <option value="newest">newest</option>
+            </select>
+        </form>
     </div>
     <div class="artists-collection">
         <h2>List of Artists</h2>

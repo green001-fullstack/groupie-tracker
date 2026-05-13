@@ -25,9 +25,22 @@ h2{
 }
 
 .form{
+    position: relative;
     display: flex;
     justify-content: center;
     padding: 20px 0px;
+}
+
+.filter{
+    position: absolute;
+    top: 20px;
+    right: 90px;
+}
+
+.select{
+    padding: 10px 15px;
+    border-radius: 20px;
+    border: none;
 }
 
 .input, .button{
