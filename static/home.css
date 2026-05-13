@@ -22,7 +22,24 @@
     }
 
     to{
-        transform: rotatae(360deg);
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse{
+    0%{
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50%{
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100%{
+        transform: scale(1);
+        opacity: 1;
     }
 }
 
@@ -77,6 +94,42 @@ body::before{
     height: 300px;
 }
 
+.radar-line{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px;
+    height: 3px;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.9));
+    transform-origin: left center;
+    animation: rotateRadar 4s linear infinite;
+}
+
+.dot-1{
+    top: 40px;
+    left: 180px;
+}
+
+.dot-2{
+    top: 200px;
+    left: 70px;
+}
+
+.dot-3{
+    top: 120px;
+    left: 240px;
+}
+
+.radar-dot{
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 0 15px white;
+    animation: pulse 2s infinite;
+}
+
 .home-h1{
     color: white;
     letter-spacing: 2px;
@@ -112,7 +165,11 @@ body::before{
     box-shadow: 0 0 15px rgba(255,255,255,0.6);
 }
 
-.home-h1, .artists-btn{
-    animation: fadeIn 1.2s ease;
+.home-h1{
+    animation: fadeIn 1.5s ease;
+}
+
+.artists-btn{
+    animation: fadeIn 2s ease;
 }
 
