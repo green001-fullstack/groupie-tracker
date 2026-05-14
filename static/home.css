@@ -60,6 +60,7 @@ body::before{
     width: 100%;
     height: 100vh;
     z-index: -1;
+    backdrop-filter: blur(4px);
     background-color: rgba(0, 0, 0, 0.648);
 }
 
@@ -71,11 +72,13 @@ body::before{
     display: flex;
     align-items: center;
     justify-content: center;
+    background: radial-gradient( circle,rgba(0,255,120,0.08), transparent 70% );
 }
 
 .radar-circle{
     position: absolute;
-    border: 2px solid rgba(255,255,255,0.15);
+    border: 1px solid rgba(0,255,120,0.25);
+    box-shadow: 0 0 10px rgba(0,255,120,0.15);
     border-radius:50%;
 }
 
@@ -99,7 +102,7 @@ body::before{
     top: 50%;
     left: 50%;
     width: 150px;
-    height: 3px;
+    height: 4px;
     background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.9));
     transform-origin: left center;
     animation: rotateRadar 4s linear infinite;
@@ -133,8 +136,27 @@ body::before{
 .home-h1{
     color: white;
     letter-spacing: 2px;
-    font-size: 4rem;
-    text-shadow: 2px 2px 10px black;
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 800;
+    text-transform: uppercase;
+    text-shadow:  0 0 5px rgba(255,255,255,0.4),
+    0 0 20px rgba(0,255,120,0.3), 2px 2px 10px black;
+}
+
+.hero-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.home-subtitle{
+    color: rgba(255,255,255,0.8);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    text-align: center;
+    max-width: 600px;
+    animation: fadeIn 1.8s ease;
 }
 
 .hero-image{
@@ -149,12 +171,16 @@ body::before{
 
 .artists-btn{
     text-decoration: none;
-    background-color: white;
+    background-color: rgba(0, 255, 120, 0.9);
     padding: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
     border-radius: 10px;
     color: black;
     padding:12px 20px;
     font-weight: bold;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    backdrop-filter: blur(4px);
     transition: 0.3s ease;
 }
 
