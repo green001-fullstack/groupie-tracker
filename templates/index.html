@@ -10,51 +10,67 @@
 
 <body>
 
+<div class="container">
+
+    <!-- Animation -->
     <div class="animation">
-         <div class="radar-container">
-        <div class="radar-circle circle-1"></div>
-        <div class="radar-circle circle-2"></div>
-        <div class="radar-circle circle-3"></div>
+        <div class="radar-container">
+            <div class="radar-circle circle-1"></div>
+            <div class="radar-circle circle-2"></div>
+            <div class="radar-circle circle-3"></div>
 
-        <div class="radar-line"></div>
+            <div class="radar-line"></div>
 
-        <span class="radar-dot dot-1"></span>
-        <span class="radar-dot dot-2"></span>
-        <span class="radar-dot dot-3"></span>
+            <span class="radar-dot dot-1"></span>
+            <span class="radar-dot dot-2"></span>
+            <span class="radar-dot dot-3"></span>
+        </div>
     </div>
-    </div>
 
+    <!-- Header -->
+    <header class="header">
+        <h1>Let's Get The Tracking Started</h1>
+        <h2>Discover and explore your favorite artists</h2>
 
-    <h1>Let's Get The Tracking Started</h1>
-    <div class="form">
-        <form class="search-form" action="/search" method="GET">
-            <input class="input" type="text" name="query" placeholder="search for an artist...">
-            <button class="button" type="submit">Search</button>
-        </form>
-        <form class="filter" action="/artists" method="GET">
-            <select class="select" name="sort" onchange="this.form.submit()">
-                <option value="">Filter artist by...</option>
-                <option value="default">default</option>
-                <option class="select-value" value="ascending">ascending</option>
-                <option value="descending">descending</option>
-                <option value="oldest">oldest</option>
-                <option value="newest">newest</option>
-            </select>
-        </form>
-    </div>
-    <div class="artists-collection">
+        <!-- Controls -->
+        <div class="form">
+
+            <form class="search-form" action="/search" method="GET">
+                <input class="input" type="text" name="query" placeholder="Search for an artist...">
+                <button class="button" type="submit">Search</button>
+            </form>
+
+            <form class="filter" action="/artists" method="GET">
+                <select class="select" name="sort" onchange="this.form.submit()">
+                    <option value="">Filter artist by...</option>
+                    <option value="default">Default</option>
+                    <option value="ascending">Ascending</option>
+                    <option value="descending">Descending</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="newest">Newest</option>
+                </select>
+            </form>
+
+        </div>
+    </header>
+
+    <!-- Artists -->
+    <section class="artists-collection">
         <h2>List of Artists</h2>
+
         <div class="artist-grid">
             {{range .}}
             <div class="artist-card">
                 <img src="{{.Image}}" alt="{{.Name}}">
                 <h3>{{.Name}}</h3>
-                <p><strong>FirstAlbum:</strong>{{.FirstAlbum}}</p>
+                <p><strong>First Album:</strong> {{.FirstAlbum}}</p>
                 <a href="/artists/{{.Id}}">Personal Details</a>
             </div>
             {{end}}
         </div>
-    </div>
-</body>
+    </section>
 
+</div>
+
+</body>
 </html>
