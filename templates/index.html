@@ -4,14 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Artists</title>
     <link rel="stylesheet" href="/static/index.css">
 </head>
 
 <body>
+
+    <div class="animation">
+         <div class="radar-container">
+        <div class="radar-circle circle-1"></div>
+        <div class="radar-circle circle-2"></div>
+        <div class="radar-circle circle-3"></div>
+
+        <div class="radar-line"></div>
+
+        <span class="radar-dot dot-1"></span>
+        <span class="radar-dot dot-2"></span>
+        <span class="radar-dot dot-3"></span>
+    </div>
+    </div>
+
+
     <h1>Let's Get The Tracking Started</h1>
     <div class="form">
-        <form action="/search" method="GET">
+        <form class="search-form" action="/search" method="GET">
             <input class="input" type="text" name="query" placeholder="search for an artist...">
             <button class="button" type="submit">Search</button>
         </form>

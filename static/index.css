@@ -4,31 +4,136 @@
     margin: 0;
 }
 
+@keyframes rotateRadar{
+    from{
+        transform: rotate(0deg)
+    }
+
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes pulse{
+    0%{
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50%{
+        transform: scale(1.5);
+        opacity: 0.5;
+    }
+
+    100%{
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
 body{
-    background-color: #111;
-    color: white;
-    /* font-family: Arial, Helvetica, sans-serif; */
+    background-color:#0b0f14;
+    color: #e6edf3;
+    padding: 20px;
     line-height: 1.5;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 }
 
+.animation{
+    position: absolute;
+    top: 20px;
+    left: 90px;
+    opacity: 0.9;
+}
+
+.radar-container{
+    border-radius: 50%;
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.radar-circle{
+    position: absolute;
+    border: 1px solid rgba(0,255,153,0.2);
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(0,255,153,0.2);
+}
+
+.circle-1{
+    width: 150px;
+    height: 150px;
+}
+
+.circle-2{
+    width: 100px;
+    height: 100px;
+}
+
+.circle-3{
+    width: 50px;
+    height: 50px;
+}
+
+.radar-line{
+    width: 75px;
+    height: 3px;
+    background-color: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: left center;
+    background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.9));
+    animation: rotateRadar 4s linear infinite;
+}
+
+.radar-dot{
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+}
+
+.dot-1{
+    top: 55px;
+    left: 90px;
+}
+
+.dot-2{
+    top: 20px;
+    left: 60px;
+}
+
+.dot-3{
+    top: 110px;
+    left: 30px;
+}
 h1{
     text-align: center;
     padding-top: 10px;
-    font-size: 2.5rem;
+    font-size: 3rem;
+    letter-spacing: -1px;
+    margin-top: 20px;
 }
 
 h2{
     text-align: center;
     margin-top: 1rem;
     opacity: 0.8;
+    font-weight: 400;
+    color: #9aa4b2;
 }
 
 .form{
     position: relative;
     display: flex;
     justify-content: center;
-    padding: 20px 0px;
+    padding: 20px 20px;
 }
 
 .filter{
@@ -38,25 +143,38 @@ h2{
 }
 
 .select{
-    padding: 10px 15px;
+    padding: 15px 15px;
     border-radius: 20px;
     border: none;
 }
 
+.search-form{
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    max-width: 900px;
+    width: 100%;
+}
+
 .input, .button{
-    padding: 10px 15px;
+    padding: 15px 15px;
     border-radius: 20px;
     text-align: center;
+    font-size: 15px;
 }
 
 .input{
     border: none;
-    width: 300px;
+    max-width: 500px;
+    width: 100%;
 }
 
 .button{
-  
     border: none;
+    max-width: 100px;
+    width: 100%;
 }
 
 .artists-collection{
@@ -106,4 +224,23 @@ h2{
 
 .artist-card a:hover{
     background-color: #333;
+}
+
+@media screen and (max-width: 1100px) {
+    .form{
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .filter{
+        position: static;
+    }
+}
+
+@media screen and (max-width: 760px){
+    .search-form{
+        flex-direction: column;
+        gap: 15px;
+    }
 }

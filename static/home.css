@@ -72,6 +72,7 @@ body::before{
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 30px auto;
     background: radial-gradient( circle,rgba(0,255,120,0.08), transparent 70% );
 }
 
