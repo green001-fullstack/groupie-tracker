@@ -5,8 +5,13 @@
 }
 
 body{
-    background-color: #111;
+    background-color: black;
     color: white;
+}
+
+.container{
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 h1{
@@ -34,16 +39,20 @@ h3{
 }
 
 .member-list{
-    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    /* list-style: none;
     padding: 0;
-    margin-top: 1rem;
+    margin-top: 1rem; */
 }
 
-.member-list li{
+.member-list p{
     background-color: #222;
-    margin: 5px auto;
-    padding: 8px;
-    width: 200px;
+    margin-top: 15px;
+    /* margin: 5px auto; */
+    padding: 10px;
     border-radius: 8px;
 }
 
@@ -56,6 +65,7 @@ h3{
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 2rem;
     margin-top: 2rem;
+    padding: 20px;
 }
 
 .location-card{
@@ -69,7 +79,8 @@ h3{
 
 .location-card h4{
     margin-bottom: 1rem;
-    color: #ffcc70;
+    color:  white;
+    font-size: 20px;
 }
 
 .date-list{
@@ -78,7 +89,8 @@ h3{
 }
 
 .date-list li{
-    background-color: #333;
+    background-color:  #00ff99;
+    color: black;
 
     margin-top: 0.5rem;
 
