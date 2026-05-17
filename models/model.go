@@ -52,3 +52,8 @@ type ErrorPage struct{
 	Code int
 	Message string
 }
+
+type Geolocation struct{
+	Lat string `json:"lat"`
+	Lon string `json:"lon"`
+}
