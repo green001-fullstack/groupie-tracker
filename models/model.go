@@ -41,6 +41,7 @@ type Dates struct{
 type FullArtist struct{
 	Artist
 	DatesLocations map[string][]string
+	Location []LocationInfo
 }
 
 type SearchResult struct{
@@ -56,4 +57,11 @@ type ErrorPage struct{
 type Geolocation struct{
 	Lat string `json:"lat"`
 	Lon string `json:"lon"`
+}
+
+type LocationInfo struct {
+	Name string
+	Lat  string
+	Lon  string
+	Dates []string
 }

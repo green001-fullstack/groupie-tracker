@@ -23,6 +23,20 @@ func FormattedDatesAndLocation(str string) string {
 	}
 	result := strings.Join(newString, ", ")
 	return result
+}
 
+func FormatForGeocoding(str string) string {
+
+	str = strings.ReplaceAll(str, "_", " ")
+	str = strings.ReplaceAll(str, "-", " ")
+
+	words := strings.Fields(str)
+
+	for i := range words {
+		words[i] = strings.ToLower(words[i])
+	}
+
+	
+	return strings.Join(words, " ")
 }
 
