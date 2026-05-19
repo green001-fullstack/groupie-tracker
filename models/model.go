@@ -41,7 +41,7 @@ type Dates struct{
 type FullArtist struct{
 	Artist
 	DatesLocations map[string][]string
-	Location []LocationInfo
+	Locations []LocationInfo
 }
 
 type SearchResult struct{

@@ -57,7 +57,7 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 
 	if len(data) == 0{
 		fmt.Println("No location found")
-		return models.Geolocation{}, err
+		return models.Geolocation{}, fmt.Errorf("no location found")
 	}
 
 	result := models.Geolocation{
@@ -84,9 +84,28 @@ func GetFullArtist() ([]models.FullArtist, error) {
 
 	for _, artist := range artists {
 
+		var locationInfo []models.LocationInfo
+
+		for location, dates := range relation[artist.Id]{
+			// fmt.Println("Geocoding:", location)
+			coordinates, err := GeocodeLocation(location)
+			if err != nil{
+				coordinates = models.Geolocation{}
+			}
+			locationinfo := models.LocationInfo{
+				Name : location,
+				Lat : coordinates.Lat,
+				Lon : coordinates.Lon,
+				Dates : dates,
+			}
+
+			locationInfo = append(locationInfo, locationinfo)
+		}
+
 		info := models.FullArtist{
 			Artist:         artist,
 			DatesLocations: relation[artist.Id],
+			Locations: locationInfo,
 		}
 
 		ArrayFullArtist = append(ArrayFullArtist, info)

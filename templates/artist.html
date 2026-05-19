@@ -4,19 +4,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Artist Details</title>
+
     <link rel="stylesheet" href="/static/artists.css">
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head>
 
 <body>
+
+    <!-- MAP -->
+    <div id="map" style="height: 500px;"></div>
+
+    <!-- CONTENT -->
     <div class="container">
+
         <h1>Personal Details</h1>
+
         <div class="artist-container">
+
+            <!-- TOP DETAILS -->
             <div class="top-details">
                 <img src="{{.Image}}" alt="{{.Name}}">
                 <h2>{{.Name}}</h2>
                 <p><strong>First Album:</strong> {{.FirstAlbum}}</p>
             </div>
+
+            <!-- MEMBERS -->
             <div class="members">
                 <h2>Members</h2>
 
@@ -26,23 +45,80 @@
                     {{end}}
                 </div>
             </div>
+
+            <!-- CONCERT LOCATIONS -->
             <div class="date-locations">
+
                 <h3>Concert Dates</h3>
+
                 <div class="locations-grid">
+
                     {{range $key, $value := .DatesLocations}}
+
                     <div class="location-card">
+
                         <h4>{{$key | formatLocation}}</h4>
+
                         <ul class="date-list">
                             {{range $value}}
                             <li>{{.}}</li>
                             {{end}}
                         </ul>
+
                     </div>
+
                     {{end}}
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
+
+    <!-- MAP SCRIPT -->
+    <script>
+
+        // CREATE MAP
+        var map = L.map('map').setView([20, 0], 2);
+
+        // ADD MAP TILES
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'OpenStreetMap'
+        }).addTo(map);
+
+        // DATA FROM GO TEMPLATE
+        var locations = [
+            {{range .Location}}
+            {
+                name: "{{.Name}}",
+                lat: parseFloat("{{.Lat}}"),
+                lon: parseFloat("{{.Lon}}"),
+                date: "{{index .Dates 0}}"
+            },
+            {{end}}
+        ];
+
+        console.log(locations);
+
+        // ADD MARKERS
+        locations.forEach(location => {
+
+            if (!isNaN(location.lat) && !isNaN(location.lon)) {
+
+                L.marker([location.lat, location.lon])
+                    .addTo(map)
+                    .bindPopup(
+                        "<strong>" + location.name + "</strong><br>" +
+                        "Date: " + location.date
+                    );
+            }
+
+        });
+
+    </script>
+
 </body>
 
 </html>
