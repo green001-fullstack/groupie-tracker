@@ -78,47 +78,43 @@
     </div>
 
     <!-- MAP SCRIPT -->
-    <script>
+<script>
+var map = L.map('map').setView([20, 0], 2);
 
-        // CREATE MAP
-        var map = L.map('map').setView([20, 0], 2);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: 'OpenStreetMap'
+}).addTo(map);
 
-        // ADD MAP TILES
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'OpenStreetMap'
-        }).addTo(map);
+// SAFE DATA FROM GO
+var locations = [
+    {{- range .Locations }}
+    {
+        name: "{{.Name}}",
+        lat: parseFloat("{{.Lat}}"),
+        lon: parseFloat("{{.Lon}}"),
+        date: "{{index .Dates 0}}"
+    },
+    {{- end }}
+];
 
-        // DATA FROM GO TEMPLATE
-        var locations = [
-            {{range .Location}}
-            {
-                name: "{{.Name}}",
-                lat: parseFloat("{{.Lat}}"),
-                lon: parseFloat("{{.Lon}}"),
-                date: "{{index .Dates 0}}"
-            },
-            {{end}}
-        ];
+console.log("locations:", locations);
 
-        console.log(locations);
-
-        // ADD MARKERS
-        locations.forEach(location => {
-
-            if (!isNaN(location.lat) && !isNaN(location.lon)) {
-
-                L.marker([location.lat, location.lon])
-                    .addTo(map)
-                    .bindPopup(
-                        "<strong>" + location.name + "</strong><br>" +
-                        "Date: " + location.date
-                    );
-            }
-
-        });
-
-    </script>
-
+// ADD MARKERS (STRICT CHECK)
+locations.forEach(loc => {
+    if (
+        Number.isFinite(loc.lat) &&
+        Number.isFinite(loc.lon)
+    ) {
+        L.marker([loc.lat, loc.lon])
+            .addTo(map)
+            .bindPopup(
+                `<strong>${loc.name}</strong><br>Date: ${loc.date}`
+            );
+    } else {
+        console.warn("Skipping invalid location:", loc);
+    }
+});
+</script>
 </body>
 
 </html>

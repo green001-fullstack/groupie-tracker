@@ -83,29 +83,9 @@ func GetFullArtist() ([]models.FullArtist, error) {
 	var ArrayFullArtist []models.FullArtist
 
 	for _, artist := range artists {
-
-		var locationInfo []models.LocationInfo
-
-		for location, dates := range relation[artist.Id]{
-			// fmt.Println("Geocoding:", location)
-			coordinates, err := GeocodeLocation(location)
-			if err != nil{
-				coordinates = models.Geolocation{}
-			}
-			locationinfo := models.LocationInfo{
-				Name : location,
-				Lat : coordinates.Lat,
-				Lon : coordinates.Lon,
-				Dates : dates,
-			}
-
-			locationInfo = append(locationInfo, locationinfo)
-		}
-
 		info := models.FullArtist{
 			Artist:         artist,
 			DatesLocations: relation[artist.Id],
-			Locations: locationInfo,
 		}
 
 		ArrayFullArtist = append(ArrayFullArtist, info)
