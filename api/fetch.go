@@ -8,6 +8,7 @@ import (
 	"stage/models"
 	"stage/utils"
 	"strings"
+	"sync"
 )
 
 var geoCache = make(map[string]models.Geolocation)
@@ -83,9 +84,43 @@ func GetFullArtist() ([]models.FullArtist, error) {
 	var ArrayFullArtist []models.FullArtist
 
 	for _, artist := range artists {
+
+		locationMap := relation[artist.Id]
+
+		locations := make([]models.LocationInfo, len(locationMap))
+
+		var wg sync.WaitGroup
+
+		i := 0
+
+		for location, dates := range locationMap{
+			index := i
+			i++
+
+			wg.Add(1)
+
+			go func(index int, location string, dates []string){
+				defer wg.Done()
+
+				coordinates, err := GeocodeLocation(location)
+				if err != nil{
+					coordinates = models.Geolocation{}
+				}
+				locations[index] = models.LocationInfo{
+					Name: location,
+					Lat: coordinates.Lat,
+					Lon: coordinates.Lon,
+					Dates: dates,
+				}
+			}(index, location, dates)
+		}
+
+
+
 		info := models.FullArtist{
 			Artist:         artist,
 			DatesLocations: relation[artist.Id],
+			Locations: locations,
 		}
 
 		ArrayFullArtist = append(ArrayFullArtist, info)

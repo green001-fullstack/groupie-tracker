@@ -11,7 +11,8 @@ import (
 	"stage/utils"
 	"strconv"
 	"strings"
-	"sync"
+	"fmt"
+	// "sync"
 )
 
 var funcMap = template.FuncMap{
@@ -125,41 +126,64 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request) {
 	for _, artist := range artistsCache {
 		if artist.Id == id {
 
-			var locations []models.LocationInfo
+			// var locations []models.LocationInfo
+			// locations := make([]models.LocationInfo, len(artist.DatesLocations))
 
-			var wg sync.WaitGroup
-			var mu sync.Mutex
+			// i := 0
 
-			for location, dates := range artist.DatesLocations {
+			// var wg sync.WaitGroup
+			// // var mu sync.Mutex
 
-				wg.Add(1)
+			// for location, dates := range artist.DatesLocations {
 
-				go func(location string, dates []string) {
-					defer wg.Done()
+			// 	wg.Add(1)
 
-					coordinates, err := api.GeocodeLocation(location)
-					if err != nil {
-						coordinates = models.Geolocation{}
-					}
+			// 	index := i
 
-					mu.Lock()
-					locations = append(locations, models.LocationInfo{
-						Name:  location,
-						Lat:   coordinates.Lat,
-						Lon:   coordinates.Lon,
-						Dates: dates,
-					})
-					mu.Unlock()
+				// go func(location string, dates []string) {
+				// 	defer wg.Done()
 
-				}(location, dates)
-			}
+				// 	coordinates, err := api.GeocodeLocation(location)
+				// 	if err != nil {
+				// 		coordinates = models.Geolocation{}
+				// 	}
 
-			wg.Wait()
+				// 	mu.Lock()
+				// 	locations = append(locations, models.LocationInfo{
+				// 		Name:  location,
+				// 		Lat:   coordinates.Lat,
+				// 		Lon:   coordinates.Lon,
+				// 		Dates: dates,
+				// 	})
+				// 	mu.Unlock()
+
+				// }(location, dates)
+
+			// 	go func(index int, location string, dates []string){
+
+			// 		defer wg.Done()
+
+			// 		coordinates, err := api.GeocodeLocation(location)
+			// 		if err != nil{
+			// 			coordinates = models.Geolocation{}
+			// 		}
+
+			// 		locations[index] = models.LocationInfo{
+			// 			Name: location,
+			// 			Lat: coordinates.Lat,
+			// 			Lon: coordinates.Lon,
+			// 			Dates: dates,
+			// 		}
+			// 	}(index, location, dates)
+			// 	i++
+			// }
+
+			// wg.Wait()
 
 			pageData := models.ArtistPageData{
 				Artist:         artist.Artist,
 				DatesLocations: artist.DatesLocations,
-				Locations:      locations,
+				Locations:      artist.Locations,
 			}
 
 			err := tmpl.ExecuteTemplate(w, "artist.html", pageData)
@@ -203,6 +227,30 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 				}
 			}
 		}
+
+		if !matched {
+			for location := range artist.DatesLocations{
+				if strings.Contains(strings.ToLower(location), query){
+					matched = true
+					break
+				}
+			}
+		}
+
+		if !matched {
+			creationDate := strconv.Itoa(artist.CreationDate)
+			if strings.Contains(creationDate, query){
+				matched = true
+				break
+			}
+		}
+
+		if  !matched {
+			if strings.Contains(artist.FirstAlbum, query){
+				matched = true
+				break
+			}
+		}
 		if matched {
 			result = append(result, artist)
 		}
@@ -223,6 +271,7 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var err error
 	artistsCache, err = api.GetFullArtist()
+	fmt.Println(artistsCache[0])
 	if err != nil {
 		log.Fatal("Error fetching artists: ", err)
 	}

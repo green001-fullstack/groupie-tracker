@@ -38,6 +38,11 @@ h3{
     margin-top: 2rem;
 }
 
+.creation-date{
+    text-align: center;
+    margin-top: 2rem;
+}
+
 .member-list{
     display: flex;
     justify-content: center;
