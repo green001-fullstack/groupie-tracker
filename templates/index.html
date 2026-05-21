@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artists</title>
     <link rel="stylesheet" href="/static/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Space+Mono:wght@400;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
 </head>
 
 <body>
@@ -26,24 +32,44 @@
     </div>
 
     <!-- hero section  -->
-     <div class="hero-section">
+    <div class="hero-section">
         <div class="hero-text">
             <h1>Track Legendary Artists Across <span class="green-subtext">The Globe</span></h1>
             <p>Explore concert locations, members, albums and live tour history</p>
         </div>
         <div class="hero-images">
-             <div class="image-placeholder"></div>
+            <div class="image-placeholder"></div>
+            <img class="image1" src="/static/images/Image3.png" alt="Artist Image 1">
+            <img class="image2" src="/static/images/Image4.jpg" alt="Artist Image 4">
+            <img class="image3" src="/static/images/Image6.jpg" alt="Artist Image 5">
+            <img class="image4" src="/static/images/Image5.jpg" alt="Artist Image 2">
         </div>
-     </div>
+    </div>
 
     <div class="container">
 
-        <!-- Header -->
-        <header class="header">
-            <!-- <h1>Let's Get The Tracking Started</h1>
-            <h2>Discover and explore your favorite artists</h2> -->
+        <div class="wave-divider">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
 
-            <!-- Controls -->
+        <!-- Main -->
+        <header class="header">
+
+            <h1 class="search-header">
+                Discover Artists by <span>name, location, or members</span>
+            </h1>
+            <p class="search-subtext">
+                Search through albums, tour history, and collaborations in seconds.
+            </p>
+
             <div class="form">
 
                 <form class="search-form" action="/search" method="GET">
@@ -67,7 +93,10 @@
 
         <!-- Artists -->
         <section class="artists-collection">
-            <h2>List of Artists</h2>
+            <div class="artists-header">
+                <h2 class="list-text">List of Artists</h2>
+                <span></span>
+            </div>
 
             <div class="artist-grid">
                 {{range .}}
