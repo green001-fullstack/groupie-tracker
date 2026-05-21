@@ -422,7 +422,7 @@ h2 {
 .artists-header span{
     flex: 1;
     height: 1px;
-    background: white;
+    background: rgba(255, 255, 255, 0.155);
 }
 
 .artists-collection {
