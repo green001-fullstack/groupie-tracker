@@ -11,7 +11,7 @@ import (
 	"stage/utils"
 	"strconv"
 	"strings"
-	"fmt"
+	// "fmt"
 	// "sync"
 )
 
@@ -271,7 +271,7 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var err error
 	artistsCache, err = api.GetFullArtist()
-	fmt.Println(artistsCache[0])
+	// fmt.Println(artistsCache[0])
 	if err != nil {
 		log.Fatal("Error fetching artists: ", err)
 	}
