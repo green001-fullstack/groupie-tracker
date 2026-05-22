@@ -73,7 +73,12 @@
             <div class="form">
 
                 <form class="search-form" action="/search" method="GET">
-                    <input class="input" type="text" name="query" placeholder="Search for an artist...">
+                    <input class="input" type="text" name="query" placeholder="Search for an artist..." list="suggestions">
+                    <datalist id="suggestions" >
+                        {{range .}}
+                        <option value="{{.Name}}"></option>
+                        {{end}}
+                    </datalist>
                     <button class="button" type="submit">Search</button>
                 </form>
 
