@@ -92,7 +92,7 @@ body {
     text-decoration: none;
     font-weight: 500;
     color: white;
-    position: relative;
+    /* position: relative; */
 }
 
 .nav-status {
@@ -178,7 +178,7 @@ body {
     width: 420px;
     height: 420px;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
+    /* background: rgba(255, 255, 255, 0.05); */
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: radial-gradient(circle,rgba(124,58,237,0.25),rgba(0,255,153,0.08), transparent 70%);
     filter: blur(3px);
@@ -260,7 +260,14 @@ body {
     content: "";
     flex: 1;
     height: 1px;
-    background: rgba(255,255,255,0.08);
+    /* background: rgba(255,255,255,0.08); */
+    box-shadow: 0 0 12px rgba(0,255,153,0.25);
+}
+.wave-divider::before{
+    background: linear-gradient(to right,rgba(124,58,237,0.2), rgba(0,255,153,0.9));
+}
+.wave-divider::after{
+    background: linear-gradient(to right,rgba(0,255,153,0.9), rgba(124,58,237,0.2));
 }
 
 .wave-divider span:nth-child(1) { height: 12px; animation-delay: 0s; }
@@ -422,7 +429,14 @@ h2 {
 .artists-header span{
     flex: 1;
     height: 1px;
-    background: rgba(255, 255, 255, 0.155);
+    /* background: rgba(255, 255, 255, 0.155); */
+    background: linear-gradient(
+        to right,
+        rgba(0,255,153,0.9),
+        rgba(124,58,237,0.2)
+    );
+
+    box-shadow: 0 0 12px rgba(0,255,153,0.25);
 }
 
 .artists-collection {
