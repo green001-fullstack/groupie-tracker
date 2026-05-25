@@ -270,6 +270,10 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	var err error
+	err = api.LoadCacheFromFile()
+	if err != nil{
+		log.Println("No cache file found, starting fresh")
+	}
 	artistsCache, err = api.GetFullArtist()
 	// fmt.Println(artistsCache[0])
 	if err != nil {

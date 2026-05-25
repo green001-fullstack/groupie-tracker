@@ -11,6 +11,7 @@ import (
 	"sync"
 )
 
+var geoMutex sync.RWMutex
 var geoCache = make(map[string]models.Geolocation)
 
 type geoResponse struct {
@@ -22,7 +23,11 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 	formattedLocation := utils.FormatForGeocoding(location)
 
 	cacheKey := strings.ToLower(formattedLocation)
-	if result, found := geoCache[cacheKey]; found {
+	geoMutex.RLock()
+	result, found := geoCache[cacheKey]
+	geoMutex.RUnlock()
+
+	if found {
 		return result, nil
 	}
 
@@ -56,17 +61,19 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 		return models.Geolocation{}, err
 	}
 
-	if len(data) == 0{
+	if len(data) == 0 {
 		fmt.Println("No location found")
 		return models.Geolocation{}, fmt.Errorf("no location found")
 	}
 
-	result := models.Geolocation{
-		Lat : data[0].Lat,
-		Lon : data[0].Lon,
+	result = models.Geolocation{
+		Lat: data[0].Lat,
+		Lon: data[0].Lon,
 	}
 
+	geoMutex.Lock()
 	geoCache[cacheKey] = result
+	geoMutex.Unlock()
 
 	return result, nil
 }
@@ -90,26 +97,33 @@ func GetFullArtist() ([]models.FullArtist, error) {
 		locations := make([]models.LocationInfo, len(locationMap))
 
 		var wg sync.WaitGroup
+		semaphore := make(chan struct{}, 5)
 
 		i := 0
 
-		for location, dates := range locationMap{
+		for location, dates := range locationMap {
 			index := i
 			i++
 
 			wg.Add(1)
 
-			go func(index int, location string, dates []string){
+			go func(index int, location string, dates []string) {
 				defer wg.Done()
 
+				semaphore <- struct{}{}
+
+				defer func() {
+					<-semaphore
+				}()
+
 				coordinates, err := GeocodeLocation(location)
-				if err != nil{
+				if err != nil {
 					coordinates = models.Geolocation{}
 				}
 				locations[index] = models.LocationInfo{
-					Name: location,
-					Lat: coordinates.Lat,
-					Lon: coordinates.Lon,
+					Name:  location,
+					Lat:   coordinates.Lat,
+					Lon:   coordinates.Lon,
 					Dates: dates,
 				}
 			}(index, location, dates)
@@ -117,16 +131,15 @@ func GetFullArtist() ([]models.FullArtist, error) {
 
 		wg.Wait()
 
-
-
 		info := models.FullArtist{
 			Artist:         artist,
 			DatesLocations: relation[artist.Id],
-			Locations: locations,
+			Locations:      locations,
 		}
 
 		ArrayFullArtist = append(ArrayFullArtist, info)
 	}
+	SaveCacheToFile()
 
 	return ArrayFullArtist, nil
 }
