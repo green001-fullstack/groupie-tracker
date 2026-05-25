@@ -115,6 +115,8 @@ func GetFullArtist() ([]models.FullArtist, error) {
 			}(index, location, dates)
 		}
 
+		wg.Wait()
+
 
 
 		info := models.FullArtist{
