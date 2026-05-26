@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -11,7 +12,6 @@ import (
 	"stage/utils"
 	"strconv"
 	"strings"
-	// "fmt"
 	// "sync"
 )
 
@@ -34,15 +34,15 @@ var tmpl = template.Must(
 var artistsCache []models.FullArtist
 
 func RenderError(w http.ResponseWriter, code int, message string) {
-    w.Header().Set("Content-Type", "text/html; charset=utf-8")
-    w.WriteHeader(code)
-    data := models.ErrorPage{
-        Code:    code,
-        Message: message,
-    }
-    if err := tmpl.ExecuteTemplate(w, "error.html", data); err != nil {
-        log.Println("template execution error:", err)
-    }
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(code)
+	data := models.ErrorPage{
+		Code:    code,
+		Message: message,
+	}
+	if err := tmpl.ExecuteTemplate(w, "error.html", data); err != nil {
+		log.Println("template execution error:", err)
+	}
 }
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -75,6 +75,8 @@ func ArtistsHandler(w http.ResponseWriter, r *http.Request) {
 
 	filteredArtist := slices.Clone(artistsCache)
 
+	pageSlice := []models.FullArtist{}
+
 	switch filter {
 	case "ascending":
 		sort.Slice(filteredArtist, func(i, j int) bool {
@@ -96,8 +98,19 @@ func ArtistsHandler(w http.ResponseWriter, r *http.Request) {
 		// No sorting, keep the original order
 		filteredArtist = artistsCache
 	}
+	
 
-	err := tmpl.ExecuteTemplate(w, "index.html", filteredArtist)
+	limit := 10
+
+	start := 0
+	end := limit
+
+	pageSlice = filteredArtist[start:end]
+	fmt.Println(pageSlice)
+
+	fmt.Println("Total artists: ", len(pageSlice))
+
+	err := tmpl.ExecuteTemplate(w, "index.html", pageSlice)
 	if err != nil {
 		RenderError(w, http.StatusInternalServerError, "Template Error")
 		return
@@ -140,24 +153,24 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 			// 	index := i
 
-				// go func(location string, dates []string) {
-				// 	defer wg.Done()
+			// go func(location string, dates []string) {
+			// 	defer wg.Done()
 
-				// 	coordinates, err := api.GeocodeLocation(location)
-				// 	if err != nil {
-				// 		coordinates = models.Geolocation{}
-				// 	}
+			// 	coordinates, err := api.GeocodeLocation(location)
+			// 	if err != nil {
+			// 		coordinates = models.Geolocation{}
+			// 	}
 
-				// 	mu.Lock()
-				// 	locations = append(locations, models.LocationInfo{
-				// 		Name:  location,
-				// 		Lat:   coordinates.Lat,
-				// 		Lon:   coordinates.Lon,
-				// 		Dates: dates,
-				// 	})
-				// 	mu.Unlock()
+			// 	mu.Lock()
+			// 	locations = append(locations, models.LocationInfo{
+			// 		Name:  location,
+			// 		Lat:   coordinates.Lat,
+			// 		Lon:   coordinates.Lon,
+			// 		Dates: dates,
+			// 	})
+			// 	mu.Unlock()
 
-				// }(location, dates)
+			// }(location, dates)
 
 			// 	go func(index int, location string, dates []string){
 
@@ -229,8 +242,8 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if !matched {
-			for location := range artist.DatesLocations{
-				if strings.Contains(strings.ToLower(location), query){
+			for location := range artist.DatesLocations {
+				if strings.Contains(strings.ToLower(location), query) {
 					matched = true
 					break
 				}
@@ -239,14 +252,14 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 
 		if !matched {
 			creationDate := strconv.Itoa(artist.CreationDate)
-			if strings.Contains(creationDate, query){
+			if strings.Contains(creationDate, query) {
 				matched = true
 				break
 			}
 		}
 
-		if  !matched {
-			if strings.Contains(artist.FirstAlbum, query){
+		if !matched {
+			if strings.Contains(artist.FirstAlbum, query) {
 				matched = true
 				break
 			}
@@ -271,7 +284,7 @@ func HandleSearch(w http.ResponseWriter, r *http.Request) {
 func main() {
 	var err error
 	err = api.LoadCacheFromFile()
-	if err != nil{
+	if err != nil {
 		log.Println("No cache file found, starting fresh")
 	}
 	artistsCache, err = api.GetFullArtist()
@@ -284,8 +297,8 @@ func main() {
 	http.HandleFunc("/artists", ArtistsHandler)
 	http.HandleFunc("/artists/", SingleArtistHandler)
 	http.HandleFunc("/search", HandleSearch)
-	log.Println("Server currently running on port:http://localhost:8000")
-	err = http.ListenAndServe(":8000", nil)
+	log.Println("Server currently running on port:http://localhost:8080")
+	err = http.ListenAndServe(":8080", nil)
 	if err != nil {
 		log.Fatal(err)
 	}
