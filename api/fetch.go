@@ -19,6 +19,8 @@ type geoResponse struct {
 	Lon string `json:"lon"`
 }
 
+var artistsCache []models.FullArtist
+
 func GeocodeLocation(location string) (models.Geolocation, error) {
 	formattedLocation := utils.FormatForGeocoding(location)
 
@@ -77,37 +79,45 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 
 	return result, nil
 }
+func Cache() ([]models.FullArtist, error) {
 
-func GetFullArtist() ([]models.FullArtist, error) {
 	artists, err := GetArtists()
 	if err != nil {
 		return nil, err
 	}
+
 	relation, err := GetRelations()
 	if err != nil {
 		return nil, err
 	}
 
-	var ArrayFullArtist []models.FullArtist
+	var newCache []models.FullArtist
+
+	semaphore := make(chan struct{}, 5)
 
 	for _, artist := range artists {
 
 		locationMap := relation[artist.Id]
 
+		// create slice with correct size
 		locations := make([]models.LocationInfo, len(locationMap))
 
 		var wg sync.WaitGroup
-		semaphore := make(chan struct{}, 5)
 
-		i := 0
+		// channel to safely collect results
+		type result struct {
+			location models.LocationInfo
+		}
 
+		results := make(chan result, len(locationMap))
+
+		// launch goroutines
 		for location, dates := range locationMap {
-			index := i
-			i++
 
 			wg.Add(1)
 
-			go func(index int, location string, dates []string) {
+			go func(location string, dates []string) {
+
 				defer wg.Done()
 
 				semaphore <- struct{}{}
@@ -120,16 +130,31 @@ func GetFullArtist() ([]models.FullArtist, error) {
 				if err != nil {
 					coordinates = models.Geolocation{}
 				}
-				locations[index] = models.LocationInfo{
-					Name:  location,
-					Lat:   coordinates.Lat,
-					Lon:   coordinates.Lon,
-					Dates: dates,
+
+				results <- result{
+					location: models.LocationInfo{
+						Name:  location,
+						Lat:   coordinates.Lat,
+						Lon:   coordinates.Lon,
+						Dates: dates,
+					},
 				}
-			}(index, location, dates)
+
+			}(location, dates)
 		}
 
+		// wait for all goroutines
 		wg.Wait()
+
+		// close results channel
+		close(results)
+
+		// safely fill locations slice
+		i := 0
+		for res := range results {
+			locations[i] = res.location
+			i++
+		}
 
 		info := models.FullArtist{
 			Artist:         artist,
@@ -137,18 +162,27 @@ func GetFullArtist() ([]models.FullArtist, error) {
 			Locations:      locations,
 		}
 
-		ArrayFullArtist = append(ArrayFullArtist, info)
+		newCache = append(newCache, info)
 	}
+
+	// atomic replacement
+	artistsCache = newCache
+
+	SaveArtistsToCache()
 	SaveCacheToFile()
 
-	return ArrayFullArtist, nil
+	return artistsCache, nil
+}
+
+func GetFullArtist()[]models.FullArtist  {
+	return artistsCache
 }
 
 func GetArtists() ([]models.Artist, error) {
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/artists")
 	if err != nil {
 		fmt.Println("Error fetching api", err)
-		return nil, err
+		return []models.Artist{}, err
 	}
 	defer resp.Body.Close()
 
@@ -160,14 +194,14 @@ func GetArtists() ([]models.Artist, error) {
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return []models.Artist{}, err
 	}
 
 	var artists []models.Artist
 
 	err = json.Unmarshal(body, &artists)
 	if err != nil {
-		return nil, err
+		return []models.Artist{}, err
 	}
 	return artists, nil
 }

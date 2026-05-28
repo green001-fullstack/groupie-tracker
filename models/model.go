@@ -29,14 +29,14 @@ type Locations struct{
 	Index []LocationItem `json:"index"`
 }
 
-type DateItem struct{
-	Id int	`json:"id"`
-	Dates []string	`json:"dates"`
-}
+// type DateItem struct{
+// 	Id int	`json:"id"`
+// 	Dates []string	`json:"dates"`
+// }
 
-type Dates struct{
-	Index []DateItem	`json:"index"`
-}
+// type Dates struct{
+// 	Index []DateItem	`json:"index"`
+// }
 
 type FullArtist struct{
 	Artist
@@ -70,4 +70,12 @@ type ArtistPageData struct {
     Artist
     DatesLocations map[string][]string
     Locations       []LocationInfo
+}
+
+type ArtistsPageData struct{
+	Artists []FullArtist
+	PageNumbers []int
+	PageNo int
+	Query string
+	Sort string
 }

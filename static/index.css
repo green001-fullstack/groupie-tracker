@@ -28,6 +28,10 @@
     }
 }
 
+html{
+    scroll-behavior: smooth;
+}
+
 body {
     padding: 0 20px;
     background:
@@ -178,7 +182,6 @@ body {
     width: 420px;
     height: 420px;
     border-radius: 50%;
-    /* background: rgba(255, 255, 255, 0.05); */
     border: 1px solid rgba(255, 255, 255, 0.1);
     background: radial-gradient(circle,rgba(124,58,237,0.25),rgba(0,255,153,0.08), transparent 70%);
     filter: blur(3px);
@@ -429,14 +432,13 @@ h2 {
 .artists-header span{
     flex: 1;
     height: 1px;
-    /* background: rgba(255, 255, 255, 0.155); */
     background: linear-gradient(
         to right,
         rgba(0,255,153,0.9),
         rgba(124,58,237,0.2)
     );
-
     box-shadow: 0 0 12px rgba(0,255,153,0.25);
+    margin-top: 30px;
 }
 
 .artists-collection {
@@ -507,6 +509,26 @@ h2 {
     background-color: #333;
 }
 
+.pagination-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+}
+
+.pagButtons{
+    padding: 20px;
+    color: black;
+    background-color: #00ff99;
+    text-decoration: none;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+}
+
 @media screen and (max-width: 1100px) {
     h1 {
         font-size: 2.2rem;
@@ -516,6 +538,20 @@ h2 {
 @media screen and (max-width: 760px) {
     .form {
         flex-direction: column;
+    }
+    .wave-divider{
+        margin-top: 70px;
+        margin-bottom: 70px;
+    }
+  
+    .hero-images img{
+        width: 200px;
+        height: 200px;
+    } 
+    .image-placeholder{
+        width: 300px;
+        height: 300px;
+        margin: auto;
     }
 }
 
@@ -532,6 +568,11 @@ h2 {
 
     .hero-images{
         margin-top: 80px;
+    }
+    
+     .wave-divider{
+        margin-top: 70px;
+        margin-bottom: 70px;
     }
 
     .nav-links,

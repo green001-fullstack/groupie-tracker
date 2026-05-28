@@ -72,11 +72,11 @@
 
             <div class="form">
 
-                <form class="search-form" action="/search" method="GET">
+                <form class="search-form" action="/artist#grid" method="GET">
                     <input class="input" type="text" name="query" placeholder="Search for an artist..."
                         list="suggestions">
                     <datalist id="suggestions">
-                        {{range .}}
+                        {{range .Artists}}
                         <option value="{{.Name}}"></option>
 
                         {{range .Members}}
@@ -87,7 +87,9 @@
                     <button class="button" type="submit">Search</button>
                 </form>
 
-                <form class="filter" action="/artists" method="GET">
+                <form class="filter" action="/artist#grid" method="GET">
+                    <input type="hidden" name="page" value="{{.PageNo}}">
+                    <input type="hidden" name="query" value="{{.Query}}">
                     <select class="select" name="sort" onchange="this.form.submit()">
                         <option value="">Filter artist by...</option>
                         <option value="default">Default</option>
@@ -102,20 +104,28 @@
         </header>
 
         <!-- Artists -->
-        <section class="artists-collection">
+        <section class="artists-collection" id="grid">
             <div class="artists-header">
                 <h2 class="list-text">List of Artists</h2>
                 <span></span>
             </div>
 
             <div class="artist-grid">
-                {{range .}}
+                {{range .Artists}}
                 <div class="artist-card">
                     <img src="{{.Image}}" alt="{{.Name}}">
                     <h3>{{.Name}}</h3>
                     <p><strong>First Album:</strong> {{.FirstAlbum}}</p>
-                    <a href="/artists/{{.Id}}">Personal Details</a>
+                    <a href="/singleArtists/{{.Id}}">Personal Details</a>
                 </div>
+                {{end}}
+            </div>
+        </section>
+
+        <section class="pagination">
+            <div class="pagination-container">
+                {{range .PageNumbers}}
+                <a class="pagButtons" href="/artist?page={{.}}&query={{$.Query}}#grid">{{.}}</a>
                 {{end}}
             </div>
         </section>
