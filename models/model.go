@@ -78,4 +78,5 @@ type ArtistsPageData struct{
 	PageNo int
 	Query string
 	Sort string
+	TotalArtists int
 }

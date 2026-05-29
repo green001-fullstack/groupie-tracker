@@ -9,8 +9,7 @@
     <link rel="stylesheet" href="/static/artists.css">
 
     <!-- Leaflet CSS -->
-    <link rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <!-- Leaflet JS -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -18,43 +17,55 @@
 
 <body>
 
-    <!-- MAP -->
-    <div id="map" style="height: 500px;"></div>
+    <div class="nav-container">
+        <div class="nav">
+            <h2>Trackwave</h2>
+            <div class="center-text">
+                <a href="#">Discover</a>
+                <a href="#">Artists</a>
+                <a href="#">Concert Maps</a>
+            </div>
+            <p>Explore</p>
+        </div>
+    </div>
 
     <!-- CONTENT -->
     <div class="container">
 
-        <h1>Personal Details</h1>
-
         <div class="artist-container">
 
             <!-- TOP DETAILS -->
-            <div class="top-details">
-                <img src="{{.Image}}" alt="{{.Name}}">
-                <h2>{{.Name}}</h2>
-                <p><strong>First Album:</strong> {{.FirstAlbum}}</p>
-            </div>
+            <div class="hero">
+                <div class="hero-left">
+                    <img src="{{.Image}}" alt="{{.Name}}">
+                    <h1>{{.Name}}</h1>
+                    <p class="sub">First Album: {{.FirstAlbum}}</p>
+                </div>
 
-            <!-- MEMBERS -->
-            <div class="members">
-                <h2>Members</h2>
+                <div class="hero-right">
+                    <div class="card">
+                        <h3>Members</h3>
+                        {{range .Members}}
+                        <span class="pill">{{.}}</span>
+                        {{end}}
+                    </div>
 
-                <div class="member-list">
-                    {{range .Members}}
-                    <p>{{.}}</p>
-                    {{end}}
+                    <div class="card">
+                        <h3>Created</h3>
+                        <p>{{.CreationDate}}</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="creation-date">
-                <h2>Creation Date</h2>
-                <p>{{.CreationDate}}</p>
-            </div>
+            <section class="map-section">
+                <h2>Tour Map</h2>
+                <div id="map"></div>
+            </section>
 
             <!-- CONCERT LOCATIONS -->
             <div class="date-locations">
 
-                <h3>Concert Dates</h3>
+                <h2>Concert Dates</h2>
 
                 <div class="locations-grid">
 
@@ -82,44 +93,45 @@
 
     </div>
 
+
     <!-- MAP SCRIPT -->
-<script>
-var map = L.map('map').setView([20, 0], 2);
+    <script>
+        var map = L.map('map').setView([20, 0], 2);
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: 'OpenStreetMap'
-}).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: 'OpenStreetMap'
+        }).addTo(map);
 
-// SAFE DATA FROM GO
-var locations = [
-    {{- range .Locations }}
-    {
-        name: "{{.Name}}",
-        lat: parseFloat("{{.Lat}}"),
-        lon: parseFloat("{{.Lon}}"),
-        date: "{{index .Dates 0}}"
-    },
-    {{- end }}
+        // SAFE DATA FROM GO
+        var locations = [
+            {{- range .Locations }}
+        {
+            name: "{{.Name}}",
+                lat: parseFloat("{{.Lat}}"),
+                    lon: parseFloat("{{.Lon}}"),
+                        date: "{{index .Dates 0}}"
+        },
+        {{- end }}
 ];
 
-console.log("locations:", locations);
+        console.log("locations:", locations);
 
-// ADD MARKERS (STRICT CHECK)
-locations.forEach(loc => {
-    if (
-        Number.isFinite(loc.lat) &&
-        Number.isFinite(loc.lon)
-    ) {
-        L.marker([loc.lat, loc.lon])
-            .addTo(map)
-            .bindPopup(
-                `<strong>${loc.name}</strong><br>Date: ${loc.date}`
-            );
-    } else {
-        console.warn("Skipping invalid location:", loc);
-    }
-});
-</script>
+        // ADD MARKERS (STRICT CHECK)
+        locations.forEach(loc => {
+            if (
+                Number.isFinite(loc.lat) &&
+                Number.isFinite(loc.lon)
+            ) {
+                L.marker([loc.lat, loc.lon])
+                    .addTo(map)
+                    .bindPopup(
+                        `<strong>${loc.name}</strong><br>Date: ${loc.date}`
+                    );
+            } else {
+                console.warn("Skipping invalid location:", loc);
+            }
+        });
+    </script>
 </body>
 
 </html>

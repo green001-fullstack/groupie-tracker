@@ -92,6 +92,7 @@ func ArtistsHandler(w http.ResponseWriter, r *http.Request) {
 		PageNo:pageNum,
 		Query:query,
 		Sort: filter,
+		TotalArtists: len(filteredArtist),
 	}
 
 	err = utils.Tmpl.ExecuteTemplate(w, "index.html", data)

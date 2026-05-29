@@ -110,6 +110,16 @@
                 <span></span>
             </div>
 
+            {{if .Query}}
+            <div class="result-query">
+                <h3>
+                    Results for <span>"{{.Query}}"</span>
+                </h3>
+
+                <p>{{.TotalArtists}} Artists found</p>
+            </div>
+            {{end}}
+
             <div class="artist-grid">
                 {{range .Artists}}
                 <div class="artist-card">
