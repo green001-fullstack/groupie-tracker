@@ -38,21 +38,30 @@
             <div class="hero">
                 <div class="hero-left">
                     <img src="{{.Image}}" alt="{{.Name}}">
-                    <h1>{{.Name}}</h1>
-                    <p class="sub">First Album: {{.FirstAlbum}}</p>
+                    <p>Active</p>
                 </div>
 
                 <div class="hero-right">
+                    <h2>artist profile</h2>
+                    <div class="artist-header">
+                        <h1>{{.Name}}</h1>
+                        <p class="sub">First Album: {{.FirstAlbum}}</p>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="stat-chip">
+                            <div class="label">Since</div>
+                            <div class="value">{{.CreationDate}}</div>
+                        </div>
+                        <div class="stat-chip">
+                            <div class="label">Members</div>
+                            <div class="value">{{len .Members}}</div>
+                        </div>
+                    </div>
                     <div class="card">
-                        <h3>Members</h3>
+                        <h3>List of Members</h3>
                         {{range .Members}}
                         <span class="pill">{{.}}</span>
                         {{end}}
-                    </div>
-
-                    <div class="card">
-                        <h3>Created</h3>
-                        <p>{{.CreationDate}}</p>
                     </div>
                 </div>
             </div>
@@ -72,9 +81,10 @@
                     {{range $key, $value := .DatesLocations}}
 
                     <div class="location-card">
-
-                        <h4>{{$key | formatLocation}}</h4>
-
+                        <div class="card-header">
+                            <span></span>
+                            <h4>{{$key | formatLocation}}</h4>
+                        </div>
                         <ul class="date-list">
                             {{range $value}}
                             <li>{{.}}</li>
