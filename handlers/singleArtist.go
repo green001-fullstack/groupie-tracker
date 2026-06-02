@@ -8,6 +8,8 @@ import (
 	"stage/api"
 	"strings"
 	"strconv"
+	"encoding/json"
+	"html/template"
 )
 
 
@@ -31,16 +33,22 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	
 	for _, artist := range artistsCache {
+		// var locJs []models.LocationInfo
 		if artist.Id == id {
+			locJs, err := json.Marshal(artist.Locations)
+			if err != nil{
+				utils.RenderError(w, http.StatusInternalServerError, "JSON Marshal Error")
+			}
 
 			pageData := models.ArtistPageData{
 				Artist:         artist.Artist,
 				DatesLocations: artist.DatesLocations,
-				Locations:      artist.Locations,
+				Locations:      template.JS(string(locJs)),
 			}
 
-			err := utils.Tmpl.ExecuteTemplate(w, "artist.html", pageData)
+			err = utils.Tmpl.ExecuteTemplate(w, "artist.html", pageData)
 			if err != nil {
 				utils.RenderError(w, http.StatusInternalServerError, "Template Error")
 				return

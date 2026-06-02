@@ -1,5 +1,7 @@
 package models
 
+import "html/template"
+
 
 type Artist struct {
     Id           int	`json:"id"`
@@ -69,7 +71,7 @@ type LocationInfo struct {
 type ArtistPageData struct {
     Artist
     DatesLocations map[string][]string
-    Locations       []LocationInfo
+    Locations       template.JS
 }
 
 type ArtistsPageData struct{

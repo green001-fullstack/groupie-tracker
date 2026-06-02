@@ -104,42 +104,23 @@
     </div>
 
 
-    <!-- MAP SCRIPT -->
     <script>
         var map = L.map('map').setView([20, 0], 2);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: 'OpenStreetMap'
+        L.tileLayer('https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=aKlAyYKkGyU10AcPK4Ny', {
+            attribution: '&copy; MapTiler &copy; OpenStreetMap contributors'
         }).addTo(map);
 
-        // SAFE DATA FROM GO
-        var locations = [
-            {{- range .Locations }}
-        {
-            name: "{{.Name}}",
-                lat: parseFloat("{{.Lat}}"),
-                    lon: parseFloat("{{.Lon}}"),
-                        date: "{{index .Dates 0}}"
-        },
-        {{- end }}
-];
-
+        var locations = JSON.parse('{{.Locations}}')
         console.log("locations:", locations);
-
-        // ADD MARKERS (STRICT CHECK)
         locations.forEach(loc => {
-            if (
-                Number.isFinite(loc.lat) &&
-                Number.isFinite(loc.lon)
-            ) {
-                L.marker([loc.lat, loc.lon])
+            lat = parseFloat(loc.Lat)
+            lon = parseFloat(loc.Lon)
+
+                L.marker([lat, lon])
                     .addTo(map)
                     .bindPopup(
-                        `<strong>${loc.name}</strong><br>Date: ${loc.date}`
+                        `<strong>${loc.Name}</strong><br>Date: ${loc.Date}`
                     );
-            } else {
-                console.warn("Skipping invalid location:", loc);
-            }
         });
     </script>
 </body>
