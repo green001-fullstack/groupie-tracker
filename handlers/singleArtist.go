@@ -35,7 +35,6 @@ func SingleArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	
 	for _, artist := range artistsCache {
-		// var locJs []models.LocationInfo
 		if artist.Id == id {
 			locJs, err := json.Marshal(artist.Locations)
 			if err != nil{

@@ -165,7 +165,6 @@ func Cache() ([]models.FullArtist, error) {
 		newCache = append(newCache, info)
 	}
 
-	// atomic replacement
 	artistsCache = newCache
 
 	SaveArtistsToCache()

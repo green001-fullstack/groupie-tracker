@@ -135,7 +135,7 @@
         <section class="pagination">
             <div class="pagination-container">
                 {{range .PageNumbers}}
-                <a class="pagButtons" href="/artist?page={{.}}&query={{$.Query}}#grid">{{.}}</a>
+                <a class="pagButtons {{if eq . $.PageNo}}active{{end}}" href="/artist?page={{.}}&query={{$.Query}}#grid">{{.}}</a>
                 {{end}}
             </div>
         </section>

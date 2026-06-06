@@ -548,17 +548,28 @@ h2 {
     gap: 20px;
 }
 
-.pagButtons{
-    padding: 20px;
-    color: black;
-    background-color: #00ff99;
-    text-decoration: none;
-    width: 50px;
-    height: 50px;
-    display: flex;
-    align-items: center;
+.pagButtons {
+    display: inline-flex;
     justify-content: center;
-    border-radius: 10px;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: white;
+    background: #1e293b;
+    transition: 0.2s;
+}
+
+.pagButtons:hover {
+    background: #334155;
+}
+
+.pagButtons.active {
+    background: #22c55e;
+    color: #fff;
+    font-weight: bold;
+    transform: scale(1.05);
 }
 
 @media screen and (max-width: 1100px) {
