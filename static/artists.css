@@ -349,4 +349,16 @@ h1, h2, h3{
     .hero{
         flex-direction: column;
     }
+    .center-text{
+        display: none;
+    }
+}
+
+@media screen and (max-width:600px){
+    .center-text{
+        display: none;
+    }
+    .hero-left{
+        gap: 15px;
+    }
 }

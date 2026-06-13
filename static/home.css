@@ -200,3 +200,9 @@ body::before{
     animation: fadeIn 2s ease;
 }
 
+@media screen and (max-width:600px){
+    .home-h1{
+        font-size: clamp(2rem, 7vw, 5.5rem);
+        text-align: center;
+    }
+}

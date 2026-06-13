@@ -20,7 +20,6 @@ func main() {
 		log.Println("No artist found in file, starting fresh")
 	}
 
-
 	if len(api.GetFullArtist()) == 0 {
         _, err = api.Cache()
         if err != nil {
