@@ -39,7 +39,7 @@ func (a *ArtistCache) GetAllArtists()[]models.FullArtist{
 	return out
 }
 
-func (a *ArtistCache) LoadCacheFromFile()error{
+func (a *ArtistCache) LoadArtistsFromFile()error{
 	data, err := os.ReadFile("artistsCache.json")
 	if err != nil {
 		return err
@@ -154,8 +154,6 @@ func (a *ArtistCache) Refresh() error{
 	return nil
 }
 
-// var artistsCache []models.FullArtist
-
 func GeocodeLocation(location string) (models.Geolocation, error) {
 	formattedLocation := utils.FormatForGeocoding(location)
 
@@ -190,6 +188,9 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 	if err != nil {
 		return models.Geolocation{}, err
 	}
+
+	fmt.Println("Status:", resp.Status)
+	fmt.Println(string(body[:200]))
 
 	var data []geoResponse
 
@@ -273,3 +274,4 @@ func GetRelations() (map[int]map[string][]string, error) {
 	}
 	return relationMap, nil
 }
+

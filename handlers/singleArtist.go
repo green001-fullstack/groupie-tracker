@@ -1,24 +1,34 @@
 package handlers
 
-
 import (
-	"net/http"
-    "stage/utils"
-	"stage/models"
-	"stage/api"
-	"strings"
-	"strconv"
 	"encoding/json"
 	"html/template"
+	"net/http"
+	"stage/api"
+	"stage/models"
+	"stage/utils"
+	"strconv"
+	"strings"
 )
 
+type SingleHandler struct{
+	Artists *api.ArtistCache
+}
 
-func SingleArtistHandler(w http.ResponseWriter, r *http.Request) {
-    artistsCache := api.GetFullArtist()
+func NewSingleArtist(cache *api.ArtistCache) *SingleHandler{
+	return &SingleHandler{
+		Artists: cache,
+	}
+}
+
+
+func (h *SingleHandler) SingleArtistHandler(w http.ResponseWriter, r *http.Request) {
 
 	path := r.URL.Path
 	newPath := strings.Trim(path, "/")
 	pathSlice := strings.Split(newPath, "/")
+
+	artistsCache := h.Artists.GetAllArtists()
 
 	if len(pathSlice) != 2 {
 		utils.RenderError(w, http.StatusBadRequest, "Invalid ID")
