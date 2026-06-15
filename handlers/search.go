@@ -10,6 +10,10 @@ import (
 	"stage/utils"
 )
 
+type Handler struct{
+	Cache *api.ArtistCacheb
+}
+
 
 func HandleSearch(w http.ResponseWriter, r *http.Request)([]models.FullArtist,error) {
 	artistsCache := api.GetFullArtist()

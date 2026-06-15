@@ -9,6 +9,8 @@ import (
 	"stage/utils"
 	"strings"
 	"sync"
+	"log"
+	"os"
 )
 
 var geoMutex sync.RWMutex
@@ -19,7 +21,140 @@ type geoResponse struct {
 	Lon string `json:"lon"`
 }
 
-var artistsCache []models.FullArtist
+type ArtistCache struct{
+	artistsCache []models.FullArtist
+	mu sync.RWMutex
+}
+
+func NewArtistCache() *ArtistCache{
+	return &ArtistCache{}
+}
+
+func (a *ArtistCache) GetAllArtists()[]models.FullArtist{
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	out := make([]models.FullArtist, len(a.artistsCache))
+	copy(out, a.artistsCache)
+	return out
+}
+
+func (a *ArtistCache) LoadCacheFromFile()error{
+	data, err := os.ReadFile("artistsCache.json")
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, &a.artistsCache)
+}
+
+func (a *ArtistCache) SaveArtistsToCache() error{
+	data, err := json.MarshalIndent(a.artistsCache, "", " ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile("artistsCache.json", data, 0644)
+}
+
+func (a *ArtistCache) Refresh() error{
+	artists, err := GetArtists()
+	if err != nil {
+		return  err
+	}
+
+	relation, err := GetRelations()
+	if err != nil {
+		return err
+	}
+
+	var newCache []models.FullArtist
+
+	semaphore := make(chan struct{}, 5)
+
+	for _, artist := range artists {
+
+		locationMap := relation[artist.Id]
+
+		// create slice with correct size
+		locations := make([]models.LocationInfo, len(locationMap))
+
+		var wg sync.WaitGroup
+
+		// channel to safely collect results
+		type result struct {
+			location models.LocationInfo
+		}
+
+		results := make(chan result, len(locationMap))
+
+		// launch goroutines
+		for location, dates := range locationMap {
+
+			wg.Add(1)
+
+			go func(location string, dates []string) {
+
+				defer wg.Done()
+
+				semaphore <- struct{}{}
+
+				defer func() {
+					<-semaphore
+				}()
+
+				coordinates, err := GeocodeLocation(location)
+				if err != nil {
+					log.Println("geocode failed:", err)
+					coordinates = models.Geolocation{}
+				}
+
+				results <- result{
+					location: models.LocationInfo{
+						Name:  location,
+						Lat:   coordinates.Lat,
+						Lon:   coordinates.Lon,
+						Dates: dates,
+					},
+				}
+
+			}(location, dates)
+		}
+
+		// wait for all goroutines
+		wg.Wait()
+
+		// close results channel
+		close(results)
+
+		// safely fill locations slice
+		i := 0
+		for res := range results {
+			locations[i] = res.location
+			i++
+		}
+
+		info := models.FullArtist{
+			Artist:         artist,
+			DatesLocations: relation[artist.Id],
+			Locations:      locations,
+		}
+
+		newCache = append(newCache, info)
+	}
+	a.mu.Lock()
+	a.artistsCache = newCache
+	a.mu.Unlock()
+
+	// SaveArtistsToCache()
+	err = a.SaveArtistsToCache()
+	if err != nil{
+		return err
+	}
+	
+	SaveCacheToFile()
+	return nil
+}
+
+// var artistsCache []models.FullArtist
 
 func GeocodeLocation(location string) (models.Geolocation, error) {
 	formattedLocation := utils.FormatForGeocoding(location)
@@ -78,103 +213,6 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 	geoMutex.Unlock()
 
 	return result, nil
-}
-func Cache() ([]models.FullArtist, error) {
-
-	artists, err := GetArtists()
-	if err != nil {
-		return nil, err
-	}
-
-	relation, err := GetRelations()
-	if err != nil {
-		return nil, err
-	}
-
-	var newCache []models.FullArtist
-
-	semaphore := make(chan struct{}, 5)
-
-	for _, artist := range artists {
-
-		locationMap := relation[artist.Id]
-
-		// create slice with correct size
-		locations := make([]models.LocationInfo, len(locationMap))
-
-		var wg sync.WaitGroup
-
-		// channel to safely collect results
-		type result struct {
-			location models.LocationInfo
-		}
-
-		results := make(chan result, len(locationMap))
-
-		// launch goroutines
-		for location, dates := range locationMap {
-
-			wg.Add(1)
-
-			go func(location string, dates []string) {
-
-				defer wg.Done()
-
-				semaphore <- struct{}{}
-
-				defer func() {
-					<-semaphore
-				}()
-
-				coordinates, err := GeocodeLocation(location)
-				if err != nil {
-					coordinates = models.Geolocation{}
-				}
-
-				results <- result{
-					location: models.LocationInfo{
-						Name:  location,
-						Lat:   coordinates.Lat,
-						Lon:   coordinates.Lon,
-						Dates: dates,
-					},
-				}
-
-			}(location, dates)
-		}
-
-		// wait for all goroutines
-		wg.Wait()
-
-		// close results channel
-		close(results)
-
-		// safely fill locations slice
-		i := 0
-		for res := range results {
-			locations[i] = res.location
-			i++
-		}
-
-		info := models.FullArtist{
-			Artist:         artist,
-			DatesLocations: relation[artist.Id],
-			Locations:      locations,
-		}
-
-		newCache = append(newCache, info)
-	}
-
-	artistsCache = newCache
-
-	SaveArtistsToCache()
-	SaveCacheToFile()
-
-	return artistsCache, nil
-}
-
-func GetFullArtist()[]models.FullArtist  {
-	return artistsCache
 }
 
 func GetArtists() ([]models.Artist, error) {

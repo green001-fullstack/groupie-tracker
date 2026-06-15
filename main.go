@@ -1,37 +1,35 @@
 package main
 
 import (
-	"stage/handlers"
 	"log"
 	"net/http"
 	"stage/api"
+	"stage/handlers"
 	"time"
 )
 
 func main() {
 	var err error
-	err = api.LoadCacheFromFile()
-	if err != nil {
+
+	cache := api.NewArtistCache()
+	err = cache.LoadCacheFromFile()
+	if err != nil{
 		log.Println("No cache file found, starting fresh")
 	}
+	
 
-	err = api.LoadArtistsFromCache()
-	if err != nil {
-		log.Println("No artist found in file, starting fresh")
+	if len(cache.GetAllArtists()) == 0{
+		err := cache.Refresh()
+		if err != nil{
+			log.Fatal("Failed to refresh cache:", err)
+		}
 	}
-
-	if len(api.GetFullArtist()) == 0 {
-        _, err = api.Cache()
-        if err != nil {
-            log.Fatal(err)
-        }
-    }
 
 		go func() {
 		for {
 			log.Println("Refreshing artist cache in background...")
 
-			_, err := api.Cache()
+			err := cache.Refresh()
 			if err != nil {
 				log.Println("Background cache refresh failed:", err)
 			} else {
