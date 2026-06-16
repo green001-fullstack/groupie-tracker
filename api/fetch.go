@@ -13,8 +13,31 @@ import (
 	"os"
 )
 
-var geoMutex sync.RWMutex
-var geoCache = make(map[string]models.Geolocation)
+type GeoCache struct{
+	geoCache map[string]models.Geolocation
+	geoMutex sync.RWMutex
+}
+
+func NewGeoCache () *GeoCache{
+	return &GeoCache{
+		geoCache : make(map[string]models.Geolocation),
+	}
+}
+
+func (g *GeoCache) CheckCache(key string) (models.Geolocation, bool){
+	g.geoMutex.RLock()
+	defer g.geoMutex.RUnlock()
+
+	result, found := g.geoCache[key]
+
+	return result, found
+}
+
+func (g *GeoCache) SetCache(key string, value models.Geolocation){
+	g.geoMutex.Lock()
+	defer g.geoMutex.Unlock()
+	g.geoCache[key] = value
+}
 
 type geoResponse struct {
 	Lat string `json:"lat"`
@@ -24,10 +47,13 @@ type geoResponse struct {
 type ArtistCache struct{
 	artistsCache []models.FullArtist
 	mu sync.RWMutex
+	geoCache *GeoCache
 }
 
-func NewArtistCache() *ArtistCache{
-	return &ArtistCache{}
+func NewArtistCache(geoCache *GeoCache) *ArtistCache{
+	return &ArtistCache{
+		geoCache: geoCache,
+	}
 }
 
 func (a *ArtistCache) GetAllArtists()[]models.FullArtist{
@@ -53,6 +79,23 @@ func (a *ArtistCache) SaveArtistsToCache() error{
 		return err
 	}
 	return os.WriteFile("artistsCache.json", data, 0644)
+}
+
+func (g *GeoCache)SaveCacheToFile()error{
+	data, err := json.MarshalIndent(g.geoCache, "", " ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile("geocache.json", data, 0644)
+}
+
+func (g *GeoCache) LoadCacheFromFile() error {
+	data, err := os.ReadFile("geocache.json")
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(data, &g.geoCache)
 }
 
 func (a *ArtistCache) Refresh() error{
@@ -101,7 +144,7 @@ func (a *ArtistCache) Refresh() error{
 					<-semaphore
 				}()
 
-				coordinates, err := GeocodeLocation(location)
+				coordinates, err := a.geoCache.GeocodeLocation(location)
 				if err != nil {
 					log.Println("geocode failed:", err)
 					coordinates = models.Geolocation{}
@@ -150,18 +193,15 @@ func (a *ArtistCache) Refresh() error{
 		return err
 	}
 	
-	SaveCacheToFile()
+	a.geoCache.SaveCacheToFile()
 	return nil
 }
 
-func GeocodeLocation(location string) (models.Geolocation, error) {
+func (g *GeoCache)GeocodeLocation(location string) (models.Geolocation, error) {
 	formattedLocation := utils.FormatForGeocoding(location)
 
 	cacheKey := strings.ToLower(formattedLocation)
-	geoMutex.RLock()
-	result, found := geoCache[cacheKey]
-	geoMutex.RUnlock()
-
+	result, found := g.CheckCache(cacheKey)
 	if found {
 		return result, nil
 	}
@@ -209,9 +249,7 @@ func GeocodeLocation(location string) (models.Geolocation, error) {
 		Lon: data[0].Lon,
 	}
 
-	geoMutex.Lock()
-	geoCache[cacheKey] = result
-	geoMutex.Unlock()
+	g.SetCache(cacheKey, result)
 
 	return result, nil
 }

@@ -1,15 +1,55 @@
 {
+ "aarhus denmark": {
+  "lat": "56.1496278",
+  "lon": "10.2134046"
+ },
+ "arizona usa": {
+  "lat": "34.3953420",
+  "lon": "-111.7632750"
+ },
  "auckland new zealand": {
   "lat": "-36.8520950",
   "lon": "174.7631803"
+ },
+ "berlin germany": {
+  "lat": "52.5173885",
+  "lon": "13.3951309"
+ },
+ "bilbao spain": {
+  "lat": "43.2630018",
+  "lon": "-2.9350039"
+ },
+ "bogota colombia": {
+  "lat": "4.6533817",
+  "lon": "-74.0836331"
+ },
+ "bratislava slovakia": {
+  "lat": "48.1516988",
+  "lon": "17.1093063"
  },
  "budapest hungary": {
   "lat": "47.4813896",
   "lon": "19.1457723"
  },
+ "california usa": {
+  "lat": "36.7014631",
+  "lon": "-118.7559970"
+ },
+ "copenhagen denmark": {
+  "lat": "55.6867243",
+  "lon": "12.5700724"
+ },
  "dunedin new zealand": {
   "lat": "-45.8740984",
   "lon": "170.5035755"
+ },
+ "dusseldorf germany": {
+  "lat": "51.2254018",
+  "lon": "6.7763137"
+ },
+ "frankfurt germany": {
+  "lat": "50.1106444",
+  "lon": "8.6820917"
  },
  "georgia usa": {
   "lat": "32.3293809",
@@ -18,6 +58,10 @@
  "lausanne switzerland": {
   "lat": "46.5218269",
   "lon": "6.6327025"
+ },
+ "lisbon portugal": {
+  "lat": "38.7077507",
+  "lon": "-9.1365919"
  },
  "london uk": {
   "lat": "51.5074456",
@@ -31,6 +75,10 @@
   "lat": "45.7578137",
   "lon": "4.8320114"
  },
+ "manchester uk": {
+  "lat": "53.4424618",
+  "lon": "-2.2324547"
+ },
  "minsk belarus": {
   "lat": "53.9024716",
   "lon": "27.5618225"
@@ -39,9 +87,17 @@
   "lat": "36.1251825",
   "lon": "-79.9046807"
  },
+ "nevada usa": {
+  "lat": "39.5158825",
+  "lon": "-116.8537220"
+ },
  "new south wales australia": {
   "lat": "-32.1629515",
   "lon": "147.0320566"
+ },
+ "new york usa": {
+  "lat": "40.7127281",
+  "lon": "-74.0060152"
  },
  "north carolina usa": {
   "lat": "35.6729639",
@@ -74,6 +130,30 @@
  "saitama japan": {
   "lat": "35.9754168",
   "lon": "139.4160114"
+ },
+ "san isidro argentina": {
+  "lat": "-34.4739792",
+  "lon": "-58.5264866"
+ },
+ "sao paulo brazil": {
+  "lat": "-23.5506507",
+  "lon": "-46.6333824"
+ },
+ "stockholm sweden": {
+  "lat": "59.3251172",
+  "lon": "18.0710935"
+ },
+ "texas usa": {
+  "lat": "31.2638905",
+  "lon": "-98.5456116"
+ },
+ "victoria australia": {
+  "lat": "-36.5986096",
+  "lon": "144.6780052"
+ },
+ "werchter belgium": {
+  "lat": "50.9705840",
+  "lon": "4.6937963"
  },
  "yogyakarta indonesia": {
   "lat": "-7.7953473",

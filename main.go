@@ -12,7 +12,13 @@ import (
 func main() {
 	var err error
 
-	cache := api.NewArtistCache()
+	geoCache := api.NewGeoCache()
+	err = geoCache.LoadCacheFromFile()
+	if err != nil {
+		log.Println("No geo cache found")
+	}
+	
+	cache := api.NewArtistCache(geoCache)
 	err = cache.LoadArtistsFromFile()
 	if err != nil {
 		log.Println("No cache file found, starting fresh")
@@ -32,20 +38,18 @@ func main() {
 		Service: artistService,
 	}
 
-
-
 	go func() {
 		for {
 			log.Println("Refreshing artist cache in background...")
-			
+
 			err := cache.Refresh()
 			if err != nil {
 				log.Println("Background cache refresh failed:", err)
-				} else {
-					log.Println("Background cache updated successfully")
-				}
-				
-				time.Sleep(24 * time.Hour)
+			} else {
+				log.Println("Background cache updated successfully")
+			}
+
+			time.Sleep(24 * time.Hour)
 		}
 	}()
 

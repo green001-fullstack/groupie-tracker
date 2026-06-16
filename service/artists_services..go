@@ -9,12 +9,12 @@ import (
 )
 
 type ArtistService struct{
-	Cache *api.ArtistCache
+	cache *api.ArtistCache
 }
 
 func NewArtistService( cache *api.ArtistCache) *ArtistService{
 	return &ArtistService{
-		Cache : cache,
+		cache : cache,
 	}
 }
 
@@ -75,7 +75,7 @@ func (h *ArtistService) Paginate(artists []models.FullArtist, pageNo int, limit 
 }
 
 func (h *ArtistService) Search( query string) []models.FullArtist{
-	artistsCache := h.Cache.GetAllArtists()
+	artistsCache := h.cache.GetAllArtists()
 	
 	query = strings.TrimSpace(query)
 	
