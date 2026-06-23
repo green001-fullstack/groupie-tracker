@@ -139,6 +139,7 @@ func (h *ArtistService) GetArtists(query, sortType string, page, limit int) ([]m
 	return h.Paginate(artists, page, limit)
 }
 
+
 func (h *ArtistService) GetArtistByID(Id int) (models.FullArtist, bool){
 	return h.cache.GetArtistByID(Id)
 }
