@@ -8,6 +8,7 @@ import(
 	"stage/models"
 	"stage/utils"
 	"strings"
+	"time"
 )
 
 func (g *GeoCache)GeocodeLocation(location string) (models.Geolocation, error) {
@@ -30,7 +31,9 @@ func (g *GeoCache)GeocodeLocation(location string) (models.Geolocation, error) {
 	}
 	req.Header.Set("User-Agent", "groupie-tracker-app")
 
-	client := &http.Client{}
+	client := &http.Client{
+		Timeout: 10 * time.Second,
+	}
 	resp, err := client.Do(req)
 	if err != nil {
 		return models.Geolocation{}, err
@@ -42,8 +45,8 @@ func (g *GeoCache)GeocodeLocation(location string) (models.Geolocation, error) {
 		return models.Geolocation{}, err
 	}
 
-	fmt.Println("Status:", resp.Status)
-	fmt.Println(string(body[:200]))
+	// fmt.Println("Status:", resp.Status)
+	// fmt.Println(string(body[:200]))
 
 	var data []geoResponse
 

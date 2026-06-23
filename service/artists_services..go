@@ -131,10 +131,14 @@ func (h *ArtistService) Search( query string) []models.FullArtist{
 	return result
 }
 
-func (s *ArtistService) GetArtists(query, sortType string, page, limit int) ([]models.FullArtist, []int) {
+func (h *ArtistService) GetArtists(query, sortType string, page, limit int) ([]models.FullArtist, []int) {
 
-	artists := s.Search(query)
-	artists = s.Sort(artists, sortType)
+	artists := h.Search(query)
+	artists = h.Sort(artists, sortType)
 
-	return s.Paginate(artists, page, limit)
+	return h.Paginate(artists, page, limit)
+}
+
+func (h *ArtistService) GetArtistByID(Id int) (models.FullArtist, bool){
+	return h.cache.GetArtistByID(Id)
 }

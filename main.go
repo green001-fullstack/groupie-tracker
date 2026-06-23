@@ -32,7 +32,7 @@ func main() {
 	}
 
 	artistService := service.NewArtistService(cache)
-	s := handlers.NewSingleArtist(cache)
+	s := handlers.NewSingleArtist(artistService)
 
 	h := &handlers.Handler{
 		Service: artistService,

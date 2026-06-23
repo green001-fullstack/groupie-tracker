@@ -21,6 +21,7 @@ func (a *ArtistCache) Refresh() error{
 	}
 
 	var newCache []models.FullArtist
+	var artistMapByID = make(map[int]models.FullArtist)
 
 	semaphore := make(chan struct{}, 5)
 
@@ -28,7 +29,6 @@ func (a *ArtistCache) Refresh() error{
 
 		locationMap := relation[artist.Id]
 
-		// create slice with correct size
 		locations := make([]models.LocationInfo, len(locationMap))
 
 		var wg sync.WaitGroup
@@ -93,9 +93,11 @@ func (a *ArtistCache) Refresh() error{
 		}
 
 		newCache = append(newCache, info)
+		artistMapByID[artist.Id] = info
 	}
 	a.mu.Lock()
 	a.artistsCache = newCache
+	a.artistByID = artistMapByID
 	a.mu.Unlock()
 
 	// SaveArtistsToCache()
@@ -104,7 +106,10 @@ func (a *ArtistCache) Refresh() error{
 		return err
 	}
 	
-	a.geoCache.SaveCacheToFile()
+	err = a.geoCache.SaveCacheToFile()
+	if err != nil{
+		return err
+	}
 	return nil
 }
 
@@ -118,11 +123,23 @@ func (a *ArtistCache) GetAllArtists()[]models.FullArtist{
 }
 
 func (a *ArtistCache) LoadArtistsFromFile()error{
+	var artists []models.FullArtist
 	data, err := os.ReadFile("artistsCache.json")
 	if err != nil {
 		return err
 	}
-	return json.Unmarshal(data, &a.artistsCache)
+	err = json.Unmarshal(data, &artists)
+	if err != nil{
+		return err
+	}
+
+	a.mu.Lock()
+	a.artistsCache = artists
+	for _, artist := range artists{
+		a.artistByID[artist.Id] = artist
+	}
+	a.mu.Unlock()
+	return nil
 }
 
 func (a *ArtistCache) SaveArtistsToCache() error{
@@ -133,4 +150,12 @@ func (a *ArtistCache) SaveArtistsToCache() error{
 		return err
 	}
 	return os.WriteFile("artistsCache.json", data, 0644)
+}
+
+func (a *ArtistCache) GetArtistByID(id int) (models.FullArtist, bool){
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+
+	artist, found := a.artistByID[id]
+	return artist, found
 }

@@ -34,17 +34,25 @@ func (g *GeoCache) Set(key string, value models.Geolocation){
 }
 
 func (g *GeoCache) LoadCacheFromFile() error {
+	var cache map[string]models.Geolocation
 	data, err := os.ReadFile("geocache.json")
 	if err != nil {
 		return err
 	}
 
-	return json.Unmarshal(data, &g.geoCache)
+	err = json.Unmarshal(data, &cache)
+	if err != nil{
+		return err
+	}
+	g.geoMutex.Lock()
+	g.geoCache = cache
+	g.geoMutex.Unlock()
+	return nil
 }
 
 func (g *GeoCache)SaveCacheToFile()error{
 	g.geoMutex.RLock()
-	data, err := json.MarshalIndent(g.geoCache, "", " ")
+	data, err := json.MarshalIndent(g.geoCache, "", "    ")
 	g.geoMutex.RUnlock()
 	if err != nil {
 		return err

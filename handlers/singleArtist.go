@@ -4,20 +4,21 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
-	"stage/api"
+	// "stage/api"
 	"stage/models"
+	"stage/service"
 	"stage/utils"
 	"strconv"
 	"strings"
 )
 
 type SingleHandler struct{
-	Artists *api.ArtistCache
+	service *service.ArtistService
 }
 
-func NewSingleArtist(cache *api.ArtistCache) *SingleHandler{
+func NewSingleArtist(service *service.ArtistService) *SingleHandler{
 	return &SingleHandler{
-		Artists: cache,
+		service: service,
 	}
 }
 
@@ -28,7 +29,7 @@ func (h *SingleHandler) SingleArtistHandler(w http.ResponseWriter, r *http.Reque
 	newPath := strings.Trim(path, "/")
 	pathSlice := strings.Split(newPath, "/")
 
-	artistsCache := h.Artists.GetAllArtists()
+	// artistsCache := h.Artists.GetAllArtists()
 
 	if len(pathSlice) != 2 {
 		utils.RenderError(w, http.StatusBadRequest, "Invalid ID")
@@ -43,12 +44,13 @@ func (h *SingleHandler) SingleArtistHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	
-	for _, artist := range artistsCache {
-		if artist.Id == id {
-			locJs, err := json.Marshal(artist.Locations)
+
+	artist, found := h.service.GetArtistByID(id)
+	if found{
+		locJs, err := json.Marshal(artist.Locations)
 			if err != nil{
 				utils.RenderError(w, http.StatusInternalServerError, "JSON Marshal Error")
+				return
 			}
 
 			pageData := models.ArtistPageData{
@@ -62,9 +64,7 @@ func (h *SingleHandler) SingleArtistHandler(w http.ResponseWriter, r *http.Reque
 				utils.RenderError(w, http.StatusInternalServerError, "Template Error")
 				return
 			}
-			return
-		}
+	} else {
+		utils.RenderError(w, http.StatusNotFound, "Artist not found")
 	}
-
-	utils.RenderError(w, http.StatusNotFound, "Artist not found")
 }
